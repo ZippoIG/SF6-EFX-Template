@@ -1,0 +1,3057 @@
+//------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: DMC5_EFX
+//   Authors: ZippoIG(thezippotm)
+//   Version: 1.0
+//   Purpose: Editing Street Fighter 6 EFX files.
+//  Category: Modding
+// File Mask: *.efx.3474275
+//  ID Bytes: 65 66 78 72 //efxr
+//   History: Made from Darkness' DMC5 EFX Template and with a little help from NSA Cloud's MHR EFX Template.
+
+LittleEndian();
+local int a <hidden=true>, b <hidden=true>,c <hidden=true>,d <hidden=true>,e <hidden=true>,f <hidden=true>,g <hidden=true>,h <hidden=true>,i <hidden=true>,j <hidden=true>,x <hidden=true>, y <hidden=true>,z <hidden=true>,p <hidden=true>,red <hidden=true>,green <hidden=true>,blue <hidden=true>,alpha <hidden=true>,onlyAlpha <hidden=true>,alphaLessRed <hidden=true>,alphaLessGreen <hidden=true>,alphaLessBlue <hidden=true>, c5it <hidden=true>, deb <hidden=true>;
+local uint64 colorBitCount_arr[999] <hidden=true>, intCount_arr[999] <hidden=true>, redPos[999] <hidden=true>,greenPos[999] <hidden=true>,bluePos[999] <hidden=true>,alphaPos[999] <hidden=true>,spos[999] <hidden=true>,mpos[999] <hidden=true>,lpos[999] <hidden=true>,fpos[999] <hidden=true>,onlyAlphaPos[999] <hidden=true>,alphaLessRedPos[999] <hidden=true>,alphaLessGreenPos[999] <hidden=true>,alphaLessBluePos[999] <hidden=true>, backPos <hidden=true>, backPoseSC <hidden=true>, backPoseSCin <hidden=true>, debug[50] <hidden=true>;
+alphaLessRed = 0,alphaLessGreen = 0,alphaLessBlue = 0,onlyAlpha = 0,red = 0,green = 0,blue = 0,alpha = 0,h = 0,i = 0,j = 0,p = 0;
+
+enum EffectGraphType
+{
+	ItemType_0x01_001 = 0x01,
+	ItemType_0x02_002 = 0x02,
+	ItemType_0x04_004 = 0x04,
+	ItemType_0x06_006 = 0x06,
+	ItemType_0x08_008 = 0x08,
+    ItemType_Transform3D = 0x09,
+	ItemType_0x0A_010 = 0x0A,
+	ItemType_0x0B_011 = 0x0B,
+	ItemType_0x0C_012 = 0x0C,
+	ItemType_0x0D_013 = 0x0D,
+	ItemType_ParentOptions = 0x0E,
+	ItemType_0x0F_015 = 0x0F,
+	ItemType_Spawn = 0x10,
+	ItemType_0x11_017 = 0x11,
+	ItemType_0x12_018 = 0x12,
+	ItemType_0x13_019 = 0x13,
+	ItemType_0x14_020 = 0x14,
+	ItemType_0x15_021 = 0x15,
+	ItemType_0x16_022 = 0x16,
+	ItemType_TypeBillboard3D = 0x17,
+	ItemType_0x18_024 = 0x18,
+	ItemType_0x19_025 = 0x19, // Type Billboard3D Material
+	ItemType_0x1A_026 = 0x1A,
+	ItemType_0x1B_027 = 0x1B,
+	ItemType_TypeMesh = 0x1C,
+	ItemType_0x1D_029 = 0x1D,
+	ItemType_0x1E_030 = 0x1E,
+	ItemType_0x1F_031 = 0x1F,
+	ItemType_0x20_032 = 0x20,
+	ItemType_0x21_033 = 0x21,
+	ItemType_0x22_034 = 0x22,
+	ItemType_0x37_055 = 0x37,
+	ItemType_0x38_056 = 0x38,
+	ItemType_TypePolygon = 0x3D,
+	ItemType_0x3E_062 = 0x3E,
+	ItemType_0x3F_063 = 0x3F,
+	ItemType_0x44_068 = 0x44,
+	ItemType_0x45_069 = 0x45,
+	ItemType_TypeNoDraw = 0x49, //TypeNoDraw
+	ItemType_0x4A_074 = 0x4A,
+	ItemType_0x4C_076 = 0x4C,
+	ItemType_0x4D_077 = 0x4D,
+	ItemType_0x4E_078 = 0x4E,
+	ItemType_Velocity3D = 0x4F,
+	ItemType_0x50_080 = 0x50,
+	ItemType_0x51_081 = 0x51,
+	ItemType_RotateAnim = 0x52,
+	ItemType_0x53_083 = 0x53,
+	ItemType_0x54_084 = 0x54,
+	ItemType_ScaleAnim = 0x55,
+	ItemType_0x56_086 = 0x56,
+	ItemType_0x57_087 = 0x57,
+	ItemType_Life = 0x59,
+	ItemType_0x5A_090 = 0x5A,
+	ItemType_UVSequence = 0x5B,
+	ItemType_0x5C_092 = 0x5C,
+	ItemType_0x5E_094 = 0x5E, // UV Scroll
+	ItemType_0x5F_095 = 0x5F,
+	ItemType_0x61_097 = 0x61,
+	ItemType_0x62_098 = 0x62,
+	ItemType_EmitterShape3D = 0x64, // Emitter Shape 3D
+	ItemType_0x65_101 = 0x65,
+	ItemType_0x66_102 = 0x66,
+	ItemType_0x67_103 = 0x67,
+	ItemType_0x68_104 = 0x68,
+	ItemType_0x69_105 = 0x69,
+	ItemType_0x6A_106 = 0x6A,
+	ItemType_0x6B_107 = 0x6B,
+	ItemType_0x6D_109 = 0x6D,
+	ItemType_0x70_112 = 0x70,
+	ItemType_0x72_114 = 0x72,
+	ItemType_0x73_115 = 0x73,
+	ItemType_ShaderSettings = 0x79, // Shader Settings
+	ItemType_Distortion = 0x7B, // Distortion
+	ItemType_0x7C_124 = 0x7C,
+	ItemType_0x7D_125 = 0x7D,
+	ItemType_0x7E_126 = 0x7E, // RTT texture
+	ItemType_0x80_128 = 0x80,
+	ItemType_0x81_129 = 0x81,
+	ItemType_PtBehavior = 0x82,
+	ItemType_0x85_133 = 0x85,
+	ItemType_0x87_135 = 0x87,
+	ItemType_0x88_136 = 0x88,
+	ItemType_0x89_137 = 0x89,
+	ItemType_0x8A_138 = 0x8A,
+	ItemType_0x8C_140 = 0x8C,
+	ItemType_0x8D_141 = 0x8D,
+	ItemType_0x8E_142 = 0x8E,
+	ItemType_0x91_145 = 0x91,
+	ItemType_0x96_150 = 0x96,
+	ItemType_0x97_151 = 0x97,
+	ItemType_0x9F_159 = 0x9F,
+	ItemType_0xA0_160 = 0xA0,
+	ItemType_PtColor = 0xA2,
+	ItemType_PtColorClip = 0xA3,
+	ItemType_0xA4_164 = 0xA4,
+	ItemType_0xA6_166 = 0xA6,
+	ItemType_0xA7_167 = 0xA7,
+	ItemType_0xA8_168 = 0xA8,
+	ItemType_0xAD_173 = 0xAD,
+	ItemType_0xAE_174 = 0xAE,
+	ItemType_0xAF_175 = 0xAF,
+	ItemType_0xB0_176 = 0xB0,
+	ItemType_0xB6_182 = 0xB6,
+	ItemType_0xB7_183 = 0xB7,
+	ItemType_0xBD_189 = 0xBD,
+	ItemType_0xBE_190 = 0xBE,
+	ItemType_0xBF_191 = 0xBF,
+	ItemType_0xC1_193 = 0xC1,
+	ItemType_0xC6_198 = 0xC6,
+	ItemType_0xC7_199 = 0xC7,
+	ItemType_0xCB_203 = 0xCB,
+	ItemType_0xCC_204 = 0xCC,
+	ItemType_0xCD_205 = 0xCD,
+	ItemType_0xCE_206 = 0xCE,
+	ItemType_0xD0_208 = 0xD0,
+	ItemType_0xD3_211 = 0xD3,
+	ItemType_0xD4_212 = 0xD4,
+	ItemType_0xD7_215 = 0xD7,
+	ItemType_0xD8_216 = 0xD8,
+	ItemType_0xD9_217 = 0xD9,
+	ItemType_0xDB_219 = 0xDB,
+	ItemType_0xDC_220 = 0xDC,
+	ItemType_0xDF_223 = 0xDF,
+	ItemType_0xE5_229 = 0xE5,
+	ItemType_0xE9_233 = 0xE9,
+	ItemType_0xEA_234 = 0xEA,
+	ItemType_0xF1_241 = 0xF1,
+	ItemType_0xF2_242 = 0xF2,
+	ItemType_0xF3_243 = 0xF3,
+	ItemType_0xF5_245 = 0xF5,
+	ItemType_0xF6_246 = 0xF6,
+	ItemType_0xF7_247 = 0xF7,
+	ItemType_0xF9_249 = 0xF9,
+	ItemType_0xFB_251 = 0xFB,
+	ItemType_0xFC_252 = 0xFC,
+	ItemType_0xFD_253 = 0xFD
+	
+	
+};
+
+string GetSegmentName(struct Segment& segment){
+    switch(segment.typeId){
+	case ItemType_0x01_001:
+		return "Unknown_ItemType_0x01_001";
+		break;
+	case ItemType_0x02_002:
+		return "Unknown_ItemType_0x02_002";
+		break;
+	case ItemType_0x04_004:
+		return "Unknown_ItemType_0x04_004";
+		break;
+	case ItemType_0x06_006:
+		return "Unknown_ItemType_0x06_006";
+		break;
+	case ItemType_0x08_008:
+		return "Unknown_ItemType_0x08_008";
+		break;
+	case ItemType_Transform3D:
+		return "Transform 3D";
+		break;
+	case ItemType_0x0A_010:
+		return "Unknown_ItemType_0x0A_010";
+		break;
+	case ItemType_0x0B_011:
+		return "Unknown_ItemType_0x0B_011";
+		break;
+	case ItemType_0x0C_012:
+		return "Unknown_ItemType_0x0C_012";
+		break;
+	case ItemType_0x0D_013:
+		return "Unknown_ItemType_0x0D_013";
+		break;
+	case ItemType_ParentOptions:
+		return "Parent Options";
+		break;
+	case ItemType_0x0F_015:
+		return "Unknown_ItemType_0x0F_015";
+		break;
+	case ItemType_Spawn:
+		return "Spawn";
+		break;
+	case ItemType_0x11_017:
+		return "Unknown_ItemType_0x11_017";
+		break;
+	case ItemType_0x12_018:
+		return "Unknown_ItemType_0x12_018";
+		break;
+	case ItemType_0x13_019:
+		return "Unknown_ItemType_0x13_019";
+		break;
+	case ItemType_0x14_020:
+		return "Unknown_ItemType_0x14_020";
+		break;
+	case ItemType_0x15_021:
+		return "Unknown_ItemType_0x15_021";
+		break;
+	case ItemType_0x16_022:
+		return "Unknown_ItemType_0x16_022";
+		break;
+	case ItemType_TypeBillboard3D:
+		return "Type Billboard 3D";
+		break;
+	case ItemType_0x18_024:
+		return "Unknown_ItemType_0x18_024";
+		break;
+	case ItemType_0x19_025:
+		return "Unknown_ItemType_0x19_025";
+		break;
+	case ItemType_0x1A_026:
+		return "Unknown_ItemType_0x1A_026";
+		break;
+	case ItemType_0x1B_027:
+		return "Unknown_ItemType_0x1B_027";
+		break;
+	case ItemType_TypeMesh:
+		return "Type Mesh";
+		break;
+	case ItemType_0x1D_029:
+		return "Unknown_ItemType_0x1D_029";
+		break;
+	case ItemType_0x1E_030:
+		return "Unknown_ItemType_0x1E_030";
+		break;
+	case ItemType_0x1F_031:
+		return "Unknown_ItemType_0x1F_031";
+		break;
+	case ItemType_0x20_032:
+		return "Unknown_ItemType_0x20_032";
+		break;
+	case ItemType_0x21_033:
+		return "Unknown_ItemType_0x21_033";
+		break;
+	case ItemType_0x22_034:
+		return "Unknown_ItemType_0x22_034";
+		break;
+	case ItemType_0x37_055:
+		return "Unknown_ItemType_0x37_055";
+		break;
+	case ItemType_0x38_056:
+		return "Unknown_ItemType_0x38_056";
+		break;
+	case ItemType_TypePolygon:
+		return "Type Polygon";
+		break;
+	case ItemType_0x3E_062:
+		return "Unknown_ItemType_0x3E_062";
+		break;
+	case ItemType_0x3F_063:
+		return "Unknown_ItemType_0x3F_063";
+		break;
+	case ItemType_0x44_068:
+		return "Unknown_ItemType_0x44_068";
+		break;
+	case ItemType_0x45_069:
+		return "Unknown_ItemType_0x45_069";
+		break;
+	case ItemType_TypeNoDraw:
+		return "Type No Draw";
+		break;
+	case ItemType_0x4A_074:
+		return "Unknown_ItemType_0x4A_074";
+		break;
+	case ItemType_0x4C_076:
+		return "Unknown_ItemType_0x4C_076";
+		break;
+	case ItemType_0x4D_077:
+		return "Unknown_ItemType_0x4D_077";
+		break;
+	case ItemType_0x4E_078:
+		return "Unknown_ItemType_0x4E_078";
+		break;
+	case ItemType_Velocity3D:
+		return "Velocity 3D";
+		break;
+	case ItemType_0x50_080:
+		return "Unknown_ItemType_0x50_080";
+		break;
+	case ItemType_0x51_081:
+		return "Unknown_ItemType_0x51_081";
+		break;
+	case ItemType_RotateAnim:
+		return "Rotate Anim";
+		break;
+	case ItemType_0x53_083:
+		return "Unknown_ItemType_0x53_083";
+		break;
+	case ItemType_0x54_084:
+		return "Unknown_ItemType_0x54_084";
+		break;
+	case ItemType_ScaleAnim:
+		return "Scale Anim";
+		break;
+	case ItemType_0x56_086:
+		return "Unknown_ItemType_0x56_086";
+		break;
+	case ItemType_0x57_087:
+		return "Unknown_ItemType_0x57_087";
+		break;
+	case ItemType_Life:
+		return "Life";
+		break;
+	case ItemType_0x5A_090:
+		return "Unknown_ItemType_0x5A_090";
+		break;
+	case ItemType_UVSequence:
+		return "UV Sequence";
+		break;
+	case ItemType_0x5C_092:
+		return "Unknown_ItemType_0x5C_092";
+		break;
+	case ItemType_0x5E_094:
+		return "Unknown_ItemType_0x5E_094";
+		break;
+	case ItemType_0x5F_095:
+		return "Unknown_ItemType_0x5F_095";
+		break;
+	case ItemType_0x61_097:
+		return "Unknown_ItemType_0x61_097";
+		break;
+	case ItemType_0x62_098:
+		return "Unknown_ItemType_0x62_098";
+		break;
+	case ItemType_EmitterShape3D:
+		return "Emitter Shape 3D";
+		break;
+	case ItemType_0x65_101:
+		return "Unknown_ItemType_0x65_101";
+		break;
+	case ItemType_0x66_102:
+		return "Unknown_ItemType_0x66_102";
+		break;
+	case ItemType_0x67_103:
+		return "Unknown_ItemType_0x67_103";
+		break;
+	case ItemType_0x68_104:
+		return "Unknown_ItemType_0x68_104";
+		break;
+	case ItemType_0x69_105:
+		return "Unknown_ItemType_0x69_105";
+		break;
+	case ItemType_0x6A_106:
+		return "Unknown_ItemType_0x6A_106";
+		break;
+	case ItemType_0x6B_107:
+		return "Unknown_ItemType_0x6B_107";
+		break;
+	case ItemType_0x6D_109:
+		return "Unknown_ItemType_0x6D_109";
+		break;
+	case ItemType_0x70_112:
+		return "Unknown_ItemType_0x70_112";
+		break;
+	case ItemType_0x72_114:
+		return "Unknown_ItemType_0x72_114";
+		break;
+	case ItemType_0x73_115:
+		return "Unknown_ItemType_0x73_115";
+		break;
+	case ItemType_ShaderSettings:
+		return "Shader Settings";
+		break;
+	case ItemType_Distortion:
+		return "Distortion";
+		break;
+	case ItemType_0x7C_124:
+		return "Unknown_ItemType_0x7C_124";
+		break;
+	case ItemType_0x7D_125:
+		return "Unknown_ItemType_0x7D_125";
+		break;
+	case ItemType_0x7E_126:
+		return "Unknown_ItemType_0x7E_126";
+		break;
+	case ItemType_0x80_128:
+		return "Unknown_ItemType_0x80_128";
+		break;
+	case ItemType_0x81_129:
+		return "Unknown_ItemType_0x81_129";
+		break;
+	case ItemType_PtBehavior:
+		return "Pt Behavior";
+		break;
+	case ItemType_0x85_133:
+		return "Unknown_ItemType_0x85_133";
+		break;
+	case ItemType_0x87_135:
+		return "Unknown_ItemType_0x87_135";
+		break;
+	case ItemType_0x88_136:
+		return "Unknown_ItemType_0x88_136";
+		break;
+	case ItemType_0x89_137:
+		return "Unknown_ItemType_0x89_137";
+		break;
+	case ItemType_0x8A_138:
+		return "Unknown_ItemType_0x8A_138";
+		break;
+	case ItemType_0x8C_140:
+		return "Unknown_ItemType_0x8C_140";
+		break;
+	case ItemType_0x8D_141:
+		return "Unknown_ItemType_0x8D_141";
+		break;
+	case ItemType_0x8E_142:
+		return "Unknown_ItemType_0x8E_142";
+		break;
+	case ItemType_0x91_145:
+		return "Unknown_ItemType_0x91_145";
+		break;
+	case ItemType_0x96_150:
+		return "Unknown_ItemType_0x96_150";
+		break;
+	case ItemType_0x97_151:
+		return "Unknown_ItemType_0x97_151";
+		break;
+	case ItemType_0x9F_159:
+		return "Unknown_ItemType_0x9F_159";
+		break;
+	case ItemType_0xA0_160:
+		return "Unknown_ItemType_0xA0_160";
+		break;
+	case ItemType_PtColor:
+		return "Pt Color";
+		break;
+	case ItemType_PtColorClip:
+		return "Pt Color Clip";
+		break;
+	case ItemType_0xA4_164:
+		return "Unknown_ItemType_0xA4_164";
+		break;
+	case ItemType_0xA6_166:
+		return "Unknown_ItemType_0xA6_166";
+		break;
+	case ItemType_0xA7_167:
+		return "Unknown_ItemType_0xA7_167";
+		break;
+	case ItemType_0xA8_168:
+		return "Unknown_ItemType_0xA8_168";
+		break;
+	case ItemType_0xAD_173:
+		return "Unknown_ItemType_0xAD_173";
+		break;
+	case ItemType_0xAE_174:
+		return "Unknown_ItemType_0xAE_174";
+		break;
+	case ItemType_0xAF_175:
+		return "Unknown_ItemType_0xAF_175";
+		break;
+	case ItemType_0xB0_176:
+		return "Unknown_ItemType_0xB0_176";
+		break;
+	case ItemType_0xB6_182:
+		return "Unknown_ItemType_0xB6_182";
+		break;
+	case ItemType_0xB7_183:
+		return "Unknown_ItemType_0xB7_183";
+		break;
+	case ItemType_0xBD_189:
+		return "Unknown_ItemType_0xBD_189";
+		break;
+	case ItemType_0xBE_190:
+		return "Unknown_ItemType_0xBE_190";
+		break;
+	case ItemType_0xBF_191:
+		return "Unknown_ItemType_0xBF_191";
+		break;
+	case ItemType_0xC1_193:
+		return "Unknown_ItemType_0xC1_193";
+		break;
+	case ItemType_0xC6_198:
+		return "Unknown_ItemType_0xC6_198";
+		break;
+	case ItemType_0xC7_199:
+		return "Unknown_ItemType_0xC7_199";
+		break;
+	case ItemType_0xCB_203:
+		return "Unknown_ItemType_0xCB_203";
+		break;
+	case ItemType_0xCC_204:
+		return "Unknown_ItemType_0xCC_204";
+		break;
+	case ItemType_0xCD_205:
+		return "Unknown_ItemType_0xCD_205";
+		break;
+	case ItemType_0xCE_206:
+		return "Unknown_ItemType_0xCE_206";
+		break;
+	case ItemType_0xD0_208:
+		return "Unknown_ItemType_0xD0_208";
+		break;
+	case ItemType_0xD3_211:
+		return "Unknown_ItemType_0xD3_211";
+		break;
+	case ItemType_0xD4_212:
+		return "Unknown_ItemType_0xD4_212";
+		break;
+	case ItemType_0xD7_215:
+		return "Unknown_ItemType_0xD7_215";
+		break;
+	case ItemType_0xD8_216:
+		return "Unknown_ItemType_0xD8_216";
+		break;
+	case ItemType_0xD9_217:
+		return "Unknown_ItemType_0xD9_217";
+		break;
+	case ItemType_0xDB_219:
+		return "Unknown_ItemType_0xDB_219";
+		break;
+	case ItemType_0xDC_220:
+		return "Unknown_ItemType_0xDC_220";
+		break;
+	case ItemType_0xDF_223:
+		return "Unknown_ItemType_0xDF_223";
+		break;
+	case ItemType_0xE5_229:
+		return "Unknown_ItemType_0xE5_229";
+		break;
+	case ItemType_0xE9_233:
+		return "Unknown_ItemType_0xE9_233";
+		break;
+	case ItemType_0xEA_234:
+		return "Unknown_ItemType_0xEA_234";
+		break;
+	case ItemType_0xF1_241:
+		return "Unknown_ItemType_0xF1_241";
+		break;
+	case ItemType_0xF2_242:
+		return "Unknown_ItemType_0xF2_242";
+		break;
+	case ItemType_0xF3_243:
+		return "Unknown_ItemType_0xF3_243";
+		break;
+	case ItemType_0xF5_245:
+		return "Unknown_ItemType_0xF5_245";
+		break;
+	case ItemType_0xF6_246:
+		return "Unknown_ItemType_0xF6_246";
+		break;
+	case ItemType_0xF7_247:
+		return "Unknown_ItemType_0xF7_247";
+		break;
+	case ItemType_0xF9_249:
+		return "Unknown_ItemType_0xF9_249";
+		break;
+	case ItemType_0xFB_251:
+		return "Unknown_ItemType_0xFB_251";
+		break;
+	case ItemType_0xFC_252:
+		return "Unknown_ItemType_0xFC_252";
+		break;
+	case ItemType_0xFD_253:
+		return "Unknown_ItemType_0xFD_253";
+		break;
+    }
+
+    return "Unknown!";
+}
+
+typedef struct{
+	ubyte   colorRed <name="Red", bgcolor=0x9B9BFF>;
+	ubyte   colorGreen <name="Green", bgcolor=0x67AA67>;
+	ubyte   colorBlue <name="Blue", bgcolor=0xFF9B9B>;
+	ubyte   colorAlpha <name="Alpha", bgcolor=0x9BFFFF>;
+} small_cc <name="Small Color Code">;
+
+typedef struct{
+	ubyte   colorRed <name="Red", bgcolor=0x9B9BFF>;
+	ubyte   colorGreen <name="Green", bgcolor=0x67AA67>;
+	ubyte   colorBlue <name="Blue", bgcolor=0xFF9B9B>;
+	ubyte   colorAlpha <name="Alpha", bgcolor=0x9BFFFF>;
+	ubyte   colorRed2 <name="Red", bgcolor=0x9B9BFF>;
+	ubyte   colorGreen2 <name="Green", bgcolor=0x67AA67>;
+	ubyte   colorBlue2 <name="Blue", bgcolor=0xFF9B9B>;
+	ubyte   colorAlpha2 <name="Alpha", bgcolor=0x9BFFFF>;
+	float   ukn_float <name="Might be brightness">;
+} mid_cc <name="Medium Color Code">;
+
+typedef struct{
+	ubyte   colorRed <name="Red", bgcolor=0x9B9BFF>;
+	ubyte   colorGreen <name="Green", bgcolor=0x67AA67>;
+	ubyte   colorBlue <name="Blue", bgcolor=0xFF9B9B>;
+	ubyte   colorAlpha <name="Alpha", bgcolor=0x9BFFFF>;
+	ubyte   colorRed2 <name="Red", bgcolor=0x9B9BFF>;
+	ubyte   colorGreen2 <name="Green", bgcolor=0x67AA67>;
+	ubyte   colorBlue2 <name="Blue", bgcolor=0xFF9B9B>;
+	ubyte   colorAlpha2 <name="Alpha", bgcolor=0x9BFFFF>;
+	ubyte   colorRed3 <name="Red", bgcolor=0x9B9BFF>;
+	ubyte   colorGreen3 <name="Green", bgcolor=0x67AA67>;
+	ubyte   colorBlue3 <name="Blue", bgcolor=0xFF9B9B>;
+	ubyte   colorAlpha3 <name="Alpha", bgcolor=0x9BFFFF>;;
+	float   Brightness <name="Might be brightness">;
+} large_cc <name="Large Color Code">;
+
+typedef struct{
+    float  red <name="Float Red", bgcolor=0x9B9BFF>;
+    float  green <name="Float Green", bgcolor=0x67AA67>;
+    float  blue <name="Float Blue", bgcolor=0xFF9B9B>;
+    float  brightness <name="Float Brightness", bgcolor=0x9BFFFF>;
+} float_cc <name="Float Color Code">;
+
+typedef struct{
+    uint32  size <name="UVS Path Size">;
+    local uint64 pos <hidden=true> = FTell();
+    if(size) wchar_t path[size] <name="UVS Path", bgcolor=0x99FF99, open=suppress>; else local wstring path <hidden=true> = "No Path Linked!";
+} uvs_t <read=Read_UVS, write=Write_UVS, open=suppress>;
+
+wstring Read_UVS(uvs_t &input){
+    return input.path;
+}
+
+void Write_UVS(uvs_t &input, string s){
+    local uint32 size = (Strlen(s) + 1) * 2;
+    if(!Strlen(s)) size = 0;
+    local uint32 bSize = input.size;
+    if(bSize) DeleteBytes(input.pos, input.size * 2);
+    if(size){
+        InsertBytes(input.pos, size, 0x00);
+        WriteWString(input.pos, (wstring)s);
+        input.size = Strlen(s) + 1;
+    } else {
+       input.size = 0; 
+    }
+    if(!bSize)input.path = s;
+}
+
+typedef struct{
+    uint32  size <name="MSK4 Path Size">;
+    local uint64 pos <hidden=true> = FTell();
+    if(size) wchar_t path[size] <name="MSK4 Path", bgcolor=0xFFC1C1, open=suppress>; else local wstring path <hidden=true> = "No Path Linked!";
+} msk4_t <read=Read_MSK4, write=Write_MSK4, open=suppress>;
+
+wstring Read_MSK4(msk4_t &input){
+    return input.path;
+}
+
+void Write_MSK4(msk4_t &input, string s){
+    local uint32 size = (Strlen(s) + 1) * 2;
+    if(!Strlen(s)) size = 0;
+    local uint32 bSize = input.size;
+    if(bSize) DeleteBytes(input.pos, input.size * 2);
+    if(size){ 
+        InsertBytes(input.pos, size, 0x00);
+        WriteWString(input.pos, (wstring)s);
+        input.size = Strlen(s) + 1;
+    } else {
+       input.size = 0; 
+    }
+    if(!bSize)input.path = s;
+}
+
+typedef struct{
+    uint32 size <name="Bone Name Size", bgcolor=0xC0FFC0>;
+    local uint64 pos <hidden=true> = FTell();
+    if(size == 0x02){
+        wchar_t bone[1] <bgcolor=0xABA8FF, name="Bone Name">;
+    } else if(size > 0x02){
+        wchar_t bone[size/2] <bgcolor=0x99CCFF, name="Bone Name", open=suppress>;
+    }
+} bone_t <read=Read_Bone, write=Write_Bone, open=suppress>;
+
+wstring Read_Bone(bone_t &input){
+    if(input.size == 0x02 || input.size == 0x00){
+        return (wstring)"No Bone Linked!";
+    } else{
+        return input.bone;
+    }
+}
+
+void Write_Bone(bone_t &input, string s){
+    local uint32 size = (Strlen(s) + 1) * 2;
+    if(input.size) DeleteBytes(input.pos, input.size);
+    InsertBytes(input.pos, size, 0x00);
+    WriteWString(input.pos, (wstring)s);
+    input.size = (Strlen(s) + 1) * 2;
+}
+
+typedef struct{
+    uint32 size <name="Mesh Path Size">;
+    local uint64 pos <hidden=true> = FTell();
+    if(size == 0x02){
+        wchar_t path[1] <bgcolor=0xABA8FF, name="Mesh Path">;
+    } else if(size > 0x02){
+        wchar_t path[size/2] <bgcolor=0x99FF99, name="Mesh Path", open=suppress>;
+    }
+} mesh_path <read=Read_Mesh_Path, write=Write_Mesh_Path, open=suppress>;
+
+wstring Read_Mesh_Path(mesh_path &input){
+    if(input.size == 0x02 || input.size == 0x00){
+        return (wstring)"No Mesh Path Linked!";
+    } else{
+        return input.path;
+    }
+}
+
+void Write_Mesh_Path(mesh_path &input, string s){
+    local uint32 size = (Strlen(s) + 1) * 2;
+    if(input.size) DeleteBytes(input.pos, input.size);
+    InsertBytes(input.pos, size, 0x00);
+    WriteWString(input.pos, (wstring)s);
+    input.size = (Strlen(s) + 1) * 2;
+}
+
+typedef struct{
+    uint32 size <name="MDF Path Size">;
+    local uint64 pos <hidden=true> = FTell();
+    if(size == 0x02){
+        wchar_t path[1] <bgcolor=0xABA8FF, name="MDF Path">;
+    } else if(size > 0x02){
+        wchar_t path[size/2] <bgcolor=0x66FFFF, name="MDF Path", open=suppress>;
+    }
+} mdf_path <read=Read_MDF_Path, write=Write_MDF_Path, open=suppress>;
+
+wstring Read_MDF_Path(mdf_path &input){
+    if(input.size == 0x02 || input.size == 0x00){
+        return (wstring)"No MDF Path Linked!";
+    } else{
+        return input.path;
+    }
+}
+
+void Write_MDF_Path(mdf_path &input, string s){
+    local uint32 size = (Strlen(s) + 1) * 2;
+    if(input.size) DeleteBytes(input.pos, input.size);
+    InsertBytes(input.pos, size, 0x00);
+    WriteWString(input.pos, (wstring)s);
+    input.size = (Strlen(s) + 1) * 2;
+}
+
+
+typedef struct (uint64 pathSizePosMain){
+	local uint64 posPath <hidden=true> = FTell();
+	local uint64 pathSizePos <hidden=true> = pathSizePosMain;
+	wstring path <bgcolor=0xFFC79F, name="Texture Path">;
+}multy_tex_path <read=Multy_Tex_Path_Red, write=Multy_Tex_Path_Write, name="Texture Path", open=suppress>;
+
+string Multy_Tex_Path_Red( multy_tex_path &input ){
+    return input.path;
+}
+void Multy_Tex_Path_Write( multy_tex_path &input, string s){
+	local uint32 sizeDif = 0;
+	local uint32 pathSize = ReadUInt(input.pathSizePos);
+	if(sizeof(input.path) > sizeof(s) * 2){
+		sizeDif = sizeof(input.path) - sizeof(s) * 2;
+		DeleteBytes(input.posPath, sizeDif);
+		input.path = s;
+		WriteUInt(input.pathSizePos, pathSize - sizeDif);
+	}else if(sizeof(input.path) < sizeof(s) * 2){
+		sizeDif =  sizeof(s) * 2 - sizeof(input.path);
+		InsertBytes(input.posPath, sizeDif, 0);
+		WriteWString(input.posPath, (wstring)s);
+		WriteUInt(input.pathSizePos, pathSize + sizeDif);
+	}
+	else{
+		WriteWString(input.posPath, (wstring)s);
+	}
+}
+
+typedef struct{
+    uint32 size <name="Texture Path Size">;
+    local uint64 pos <hidden=true> = FTell();
+	local uint64 posTemp <hidden=true> = 0;
+    if(size == 0x02){
+        wchar_t path[1] <bgcolor=0xABA8FF, name="Texture Path">;
+    } else if(size > 0x02){
+		do{
+			multy_tex_path path(pos - 4);
+			posTemp = FTell();
+		}while(posTemp - pos < size);
+    }
+} tex_path;
+
+
+
+typedef struct{
+    uint32 size <name="Path Size">;
+    local uint64 pos <hidden=true> = FTell();
+    if(size == 0x02){
+        wchar_t path[1] <bgcolor=0xABA8FF, name="Path">;
+    } else if(size > 0x02){
+        wchar_t path[size/2] <bgcolor=0xFFBB66, name="Path", open=suppress>;
+    }
+} basic_path <read=Read_Basic_Path, write=Write_Basic_Path, open=suppress>;
+
+wstring Read_Basic_Path(basic_path &input){
+    if(input.size == 0x02 || input.size == 0x00){
+        return (wstring)"No Path Linked!";
+    } else{
+        return input.path;
+    }
+}
+
+void Write_Basic_Path(basic_path &input, string s){
+    local uint32 size = (Strlen(s) + 1) * 2;
+    if(input.size) DeleteBytes(input.pos, input.size);
+    InsertBytes(input.pos, size, 0x00);
+    WriteWString(input.pos, (wstring)s);
+    input.size = (Strlen(s) + 1) * 2;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+typedef struct{
+    uint32  size <name="Mesh Path Size">;
+    local uint64 bakPos <hidden=true> = FTell();
+    local uint64 pos <hidden=true> = FTell() + 8 + overriddenHashCount * 28;
+    FSeek(pos);
+    if(size) wchar_t path[size] <name="Mesh Path", bgcolor=0x99FF99, open=suppress>; else local wstring path <hidden=true> = "No Path Linked!";
+    FSeek(bakPos);
+} mdf_mesh_t <read=Read_MDF_Mesh, write=Write_MDF_Mesh, open=suppress>;
+
+wstring Read_MDF_Mesh(mdf_mesh_t &input){
+    return input.path;
+}
+
+void Write_MDF_Mesh(mdf_mesh_t &input, string s){
+    local uint32 size = (Strlen(s) + 1) * 2;
+    if(!Strlen(s)) size = 0;
+    local uint32 bSize = input.size;
+    if(bSize) DeleteBytes(input.pos, input.size * 2);
+    if(size) InsertBytes(input.pos, size, 0x00);
+    if(size) WriteWString(input.pos, (wstring)s);
+    if(size) input.size = Strlen(s) + 1; else input.size = 0;
+    if(!bSize)input.path = s;
+}
+
+typedef struct{
+    uint32  size <name="MDF Path Size">;
+    local uint64 bakPos <hidden=true> = FTell();
+    local uint64 pos <hidden=true> = FTell() + 4 + overriddenHashCount * 28 + mesh.size * 2;
+    FSeek(pos);
+    if(size) wchar_t path[size] <name="MDF Path", bgcolor=0x66FFFF, open=suppress>; else local wstring path <hidden=true> = "No Path Linked!";
+    FSeek(bakPos);
+} mdf_mdf_t <read=Read_MDF_MDF, write=Write_MDF_MDF, open=suppress>;
+
+wstring Read_MDF_MDF(mdf_mdf_t &input){
+    return input.path;
+}
+
+void Write_MDF_MDF(mdf_mdf_t &input, string s){
+    local uint32 size = (Strlen(s) + 1) * 2;
+    if(!Strlen(s)) size = 0;
+    local uint32 bSize = input.size;
+    if(bSize) DeleteBytes(input.pos, input.size * 2);
+    if(size) InsertBytes(input.pos, size, 0x00);
+    if(size) WriteWString(input.pos, (wstring)s);
+    if(size) input.size = Strlen(s) + 1; else input.size = 0;
+    if(!bSize)input.path = s;
+}
+
+typedef struct{
+    uint32  size <name="Tex Path Size">;
+    local uint64 bakPos <hidden=true> = FTell();
+    local uint64 pos <hidden=true> = FTell() + overriddenHashCount * 28 + mesh.size * 2 + mdf.size * 2;
+    FSeek(pos);
+    if(size) wchar_t path[size] <name="TEX Path", bgcolor=0xFFC79F, open=suppress>; else local wstring path <hidden=true> = "No Path Linked!";
+    FSeek(bakPos);
+} mdf_tex_t <read=Read_MDF_TEX, write=Write_MDF_TEX, open=suppress>;
+
+wstring Read_MDF_TEX(mdf_tex_t &input){
+    return input.path;
+}
+
+void Write_MDF_TEX(mdf_tex_t &input, string s){
+    local uint32 size = (Strlen(s) + 1) * 2;
+    if(!Strlen(s)) size = 0;
+    local uint32 bSize = input.size;
+    if(bSize) DeleteBytes(input.pos, input.size * 2);
+    if(size) InsertBytes(input.pos, size, 0x00);
+    if(size) WriteWString(input.pos, (wstring)s);
+    if(size) input.size = Strlen(s) + 1; else input.size = 0;
+    if(!bSize)input.path = s;
+}
+
+string property_name(struct parameter_struct &fltStruct){
+    return mdf_hash_decode(fltStruct.prop_hash);
+}
+
+typedef enum <UINT32> {
+    LOOP = 0xFFFFFFFF,
+    NOT_LOOP = 0x00000002
+} Cycle_Loop;
+
+typedef enum <UINT32> {
+    starting_frame_only = 0,
+	looped_animation = 1,
+	animate_once = 2,
+	animate_once_freeze_on_last_frame = 3,
+	
+	starting_frame_only_flipped_vertically = 4,
+	looped_animation_flipped_vertically = 5,
+	animate_once_flipped_vertically = 6,
+	animate_once_freeze_on_last_frame_flipped_vertically = 7,
+	
+	starting_frame_only_random_flipped_vertically = 8,
+	looped_animation_random_flipped_vertically = 9,
+	animate_once_random_flipped_vertically = 10,
+	animate_once_freeze_on_last_frame_random_flipped_vertically = 11,
+	
+	starting_frame_only_dup = 12,
+	looped_animation_dup = 13,
+	animate_once_dup = 14,
+	animate_once_freeze_on_last_frame_dup = 15,
+	
+	starting_frame_only_flipped_horizontally = 16,
+	looped_animation_flipped_horizontally = 17,
+	animate_once_flipped_horizontally = 18,
+	animate_once_freeze_on_last_frame_flipped_horizontally = 19,
+	
+	starting_frame_only_rotated_180 = 20,
+	looped_animation_rotated_180 = 21,
+	animate_once_rotated_180 = 22,
+	animate_once_freeze_on_last_frame_rotated_180 = 23,
+	
+	starting_frame_only_random_rotated_180 = 24,
+	looped_animation_random_rotated_180 = 25,
+	animate_once_random_rotated_180 = 26,
+	animate_once_freeze_on_last_frame_random_rotated_180 = 27,
+	
+	starting_frame_only_flipped_horizontally_dup = 16,
+	looped_animation_flipped_horizontally_dup = 17,
+	animate_once_flipped_horizontally_dup = 18,
+	animate_once_freeze_on_last_frame_flipped_horizontally_dup = 19,
+	
+	starting_frame_only_random_flipped_horizontally = 32,
+	looped_animation_random_flipped_horizontally = 33,
+	animate_once_random_flipped_horizontally = 34,
+	animate_once_freeze_on_last_frame_random_flipped_horizontally = 35,
+	
+	starting_frame_only_flipped_vertically_random_flipped_horizontally = 36,
+	looped_animation_flipped_vertically_random_flipped_horizontally = 37,
+	animate_once_flipped_vertically_random_flipped_horizontally = 38,
+	animate_once_freeze_on_last_frame_flipped_vertically_random_flipped_horizontally = 39
+} Animation_Mode <read=Name_AnimationMode>;
+
+string Name_AnimationMode(Animation_Mode& t){
+    switch(t){
+    case 0:
+        return "First Frame Only";
+        break;
+    
+    case 1:
+        return "Looped Animation";
+        break;
+    
+    case 2:
+        return "Do The Animation Once And Disappear";
+        break;
+    
+    case 3:
+        return "Do The Animation Once And Freeze On Last Frame";
+        break;
+    
+    case 4:
+        return "First Frame Only - Flipped Vertically";
+        break;
+    
+    case 5:
+        return "Looped Animation - Flipped Vertically";
+        break;
+    
+    case 6:
+        return "Do The Animation Once And Disappear - Flipped Vertically";
+        break;
+    
+    case 7:
+        return "Do The Animation Once And Freeze On Last Frame - Flipped Vertically";
+        break;
+    
+    case 8:
+        return "First Frame Only - Randomized Flipped Vertically";
+        break;
+    
+    case 9:
+        return "Looped Animation - Randomized Flipped Vertically";
+        break;
+    
+    case 10:
+        return "Do The Animation Once And Disappear - Randomize Flipped Vertically";
+        break;
+    
+    case 11:
+        return "Do The Animation Once And Freeze On Last Frame - Randomized Flipped Vertically";
+        break;
+    
+    case 12:
+        return "First Frame Only";
+        break;
+    
+    case 13:
+        return "Looped Animation";
+        break;
+    
+    case 14:
+        return "Do The Animation Once And Disappear";
+        break;
+    
+    case 15:
+        return "Do The Animation Once And Freeze On Last Frame";
+        break;
+    
+    case 16:
+        return "First Frame Only - Flipped Horizontally";
+        break;
+    
+    case 17:
+        return "Looped Animation - Flipped Horizontally";
+        break;
+    
+    case 18:
+        return "Do The Animation Once And Disappear - Flipped Horizontally";
+        break;
+    
+    case 19:
+        return "Do The Animation Once And Freeze On Last Frame - Flipped Horizontally";
+        break;
+    
+    case 20:
+        return "First Frame Only - Rotated 180 Degrees";
+        break;
+    
+    case 21:
+        return "Looped Animation - Rotated 180 Degrees";
+        break;
+    
+    case 22:
+        return "Do The Animation Once And Disappear - Rotated 180 Degrees";
+        break;
+    
+    case 23:
+        return "Do The Animation Once And Freeze On Last Frame - Rotated 180 Degrees";
+        break;
+    
+    case 24:
+        return "First Frame Only - Flipped Horizontally - Randomized Flipped Vertically";
+        break;
+    
+    case 25:
+        return "Looped Animation - Flipped Horizontally - Randomized Flipped Vertically";
+        break;
+    
+    case 26:
+        return "Do The Animation Once And Disappear - Flipped Horizontally - Randomized Flipped Vertically";
+        break;
+    
+    case 27:
+        return "Do The Animation Once And Freeze On Last Frame - Flipped Horizontally - Randomized Flipped Vertically";
+        break;
+    
+    case 28:
+        return "First Frame Only - Flipped Horizontally";
+        break;
+    
+    case 29:
+        return "Looped Animation - Flipped Horizontally";
+        break;
+    
+    case 30:
+        return "Do The Animation Once And Disappear - Flipped Horizontally";
+        break;
+    
+    case 31:
+        return "Do The Animation Once And Freeze On Last Frame - Flipped Horizontally";
+        break;
+    
+    case 32:
+        return "First Frame Only - Randomized Flipped Horizontally";
+        break;
+    
+    case 33:
+        return "Looped Animation - Randomized Flipped Horizontally";
+        break;
+    
+    case 34:
+        return "Do The Animation Once And Disappear - Randomized Flipped Horizontally";
+        break;
+    
+    case 35:
+        return "Do The Animation Once And Freeze On Last Frame - Randomized Flipped Horizontally";
+        break;
+    
+    case 36:
+        return "First Frame Only - Flipped Vertically - Randomized Flipped Horizontally";
+        break;
+    
+    case 37:
+        return "Looped Animation - Flipped Vertically - Randomized Flipped Horizontally";
+        break;
+    
+    case 38:
+        return "Do The Animation Once And Disappear - Flipped Vertically - Randomized Flipped Horizontally";
+        break;
+    
+    case 39:
+        return "Do The Animation Once And Freeze On Last Frame - Flipped Vertically - Randomized Flipped Horizontally";
+        break;
+    //there's more
+    default:
+        local string ret;
+        SPrintf(ret,"%u" ,t);
+        return ret;
+        break;
+    }
+}
+
+typedef enum <UINT32> {
+    starting_frame_only_mesh = 0,
+	looped_animation_mesh = 1,
+	animate_once_mesh = 2,
+	animate_once_freeze_on_last_frame_mesh = 3
+} Animation_Mode_Mesh <read=Name_AnimationModeMesh>;
+
+string Name_AnimationModeMesh(Animation_Mode_Mesh& t){
+    switch(t){
+    case 0:
+        return "First Frame Only";
+        break;
+    
+    case 1:
+        return "Looped Animation";
+        break;
+    
+    case 2:
+        return "Do The Animation Once And Disappear";
+        break;
+    
+    case 3:
+        return "Do The Animation Once And Freeze On Last Frame";
+        break;
+    
+    //there's more
+    default:
+        local string ret;
+        SPrintf(ret,"%u" ,t);
+        return ret;
+        break;
+    }
+}
+
+typedef struct {
+    int s;
+    int r;
+} RangeI;
+
+
+void HeaderKind(EffectGraphType typeId){
+	switch (typeId) {
+		case ItemType_0x01_001:
+            ubyte ukn[44];
+			break;
+			
+		case ItemType_0x02_002:
+            uint32 ukn1[22];
+            basic_path vsdfPath <name="vsdf Path">;
+			break;
+			
+		case ItemType_0x04_004:
+            uint32 ukn1[6];
+			break;
+			
+		case ItemType_0x06_006:
+            uint32 ukn1[32];
+			break;
+			
+		case ItemType_0x08_008:
+            uint32 ukn1[7];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_Transform3D:
+            uint32 ukn;
+			float xPos <name="Position X">;
+			float yPos <name="Position Y">;
+			float zPos <name="Position Z">;
+			float xRot <name="Rotation X">;
+			float yRot <name="Rotation Y">;
+			float zRot <name="Rotation Z">;
+			float xScale <name="Scale X">;
+			float yScale <name="Scale Y">;
+			float zScale <name="Scale Z">;
+			uint32 ukn;
+			break;
+			
+		case ItemType_0x0A_010:
+            ubyte ukn[12];
+			break;
+			
+		case ItemType_0x0B_011:
+            ubyte ukn[224];
+			break;
+			
+		case ItemType_0x0C_012:
+            uint32 ukn1[8];
+			uint32 ukn2;
+			uint32 ukn3;
+			uint32 ukn4;
+            ubyte ukn5[ukn2 + ukn3 + ukn4];
+			break;
+			
+		case ItemType_0x0D_013:
+            uint32 ukn1[11];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_ParentOptions:
+            uint32 ukn1;
+			uint32 positionX <name="Position X">;
+			uint32 positionY <name="Position Y">;
+			uint32 positionZ <name="Position Z">;
+			uint32 rotationX <name="Rotation X">;
+			uint32 rotationY <name="Rotation Y">;
+			uint32 rotationZ <name="Rotation Z">;
+			uint32 scaleX <name="Scale X">;
+			uint32 scaleY <name="Scale Y">;
+			uint32 scaleZ <name="Scale Z">;
+			ubyte followBone <name="Follow Bone">;
+			float ukn2;
+			uint32 ukn3[6];
+            bone_t bone <name="Bone">;
+			break;
+			
+		case ItemType_0x0F_015:
+            uint32 ukn1[9];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_Spawn:
+            uint32 ukn1[23];
+			break;
+			
+		case ItemType_0x11_017:
+            uint32 ukn1[9];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_0x12_018:
+			uint32 ukn1[3];
+			spos[i] = FTell();
+            i++;
+            small_cc small_color;
+			break;
+			
+		case ItemType_0x13_019:
+            uint32 ukn1[8];
+			uint32 subSize1 <name="Sub Struct1 Size">;
+			uint32 subSize2 <name="Sub Struct2 Size">;
+			uint32 subSize3 <name="Sub Struct3 Size">;
+			if(0 < subSize1){
+                ubyte ukn2[subSize1] <name="Sub Struct1">;
+            }
+			if(0 < subSize2){
+                ubyte ukn3[subSize2] <name="Sub Struct2">;
+            }
+			if(0 < subSize3){
+                ubyte ukn4[subSize3] <name="Sub Struct3">;
+            }
+			break;
+		
+		case ItemType_0x14_020:
+            uint32 ukn[2];
+			break;
+			
+		case ItemType_0x15_021:
+            uint32 ukn1[2];
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn2[12];
+			break;
+			
+		case ItemType_0x16_022:
+            uint32 ukn1[15];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_TypeBillboard3D:
+            uint32 ukn1[2];
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn2[3];
+			float rotation <name="Rotation">;
+			float rotationRange <name="Rotation Range">;
+			float scaleMultiplier <name="Scale Multiplier">;
+			float scaleMultiplierRange <name="Scale Multiplier Range">;
+			float scaleX <name="Scale X">;
+			float scaleXRange <name="Scale X Range">;
+			float scaleY <name="Scale Y">;
+			float scaleYRange <name="Scale Y Range">;
+			float ukn3[4];
+			break;
+			
+		case ItemType_0x18_024:
+            uint32 ukn1[15];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_0x19_025:
+            uint32 ukn1[17];
+			uint32 subSize <name="Sub Struct Size">;
+			uint32 ukn2[3];
+			uint32 mdfPathSize <name="MDF Path Size">;
+			uint32 mmtrPathSize <name="MMTR Path Size">;
+			uint32 texPathSize <name="Texture Path Size">;
+            if(0 < subSize){
+                ubyte ukn4[subSize * 32] <name="Sub Struct">;
+            }
+			if(0 < mdfPathSize){
+                wchar_t path1[mdfPathSize] <name="MDF Path", bgcolor=0x99FF99, open=suppress>;
+            }
+			if(0 < mmtrPathSize){
+                wchar_t path2[mmtrPathSize] <name="MMTR Path", bgcolor=0x99FF99, open=suppress>;
+            }
+			if(0 < texPathSize){
+                wchar_t path3[texPathSize] <name="TEX Path", bgcolor=0x99FF99, open=suppress>;
+            }
+			break;
+			
+		case ItemType_0x1A_026: // Probably wrong
+            uint32 ukn1[45];
+			break;
+			
+		case ItemType_0x1B_027:
+            uint32 ukn1[14];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			ubyte ukn3[16];
+			break;
+			
+		case ItemType_TypeMesh:
+            uint32 ukn1[3];
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn3[2];
+			uint32 frameCount <name="Frame Count">;
+			uint32 startingFrameMin <name="Starting Frame Min">;
+			uint32 startingFrameMax <name="Starting Frame Max">;
+			float animationSpeedMin <name="Animation Speed Min">;
+			float animationSpeedMax <name="Animation Speed Max">;
+			float acceleration <name="Acceleration">;
+            float accelerationRange <name="Acceleration Range">;
+			Animation_Mode_Mesh mode <name="Animation Mode">;
+			uint32 ukn4[2];
+			float rotationX <name="Rotation X">;
+            float rotationXRange <name="Rotation X Range">;
+            float rotationY <name="Rotation Y">;
+            float rotationYRange <name="Rotation Y Range">;
+            float rotationZ <name="Rotation Z">;
+            float rotationZRange <name="Rotation Z Range">;
+            float scaleX <name="Scale X">;
+            float scaleXRange <name="Scale X Range">;
+            float scaleY <name="Scale Y">;
+            float scaleYRange <name="Scale Y Range">;
+            float scaleZ <name="Scale Z">;
+            float scaleZRange <name="Scale Z Range">;
+            float scaleMultiplier <name="Scale Multiplier">;
+            float scaleMultiplierRange <name="Scale Multiplier Range">;
+			uint32 ukn5[4];
+			mesh_path mesh1Path1 <name="Mesh 1 Path">;
+			mesh_path mesh1Path2 <name="Mesh 2 Path">;
+			mdf_path mdfPath <name="MDF Path">;
+			uint32 subSize1 <name="MDF Parameters Struct Size">;
+			if(subSize1 > 0){
+				struct {
+					for (e = 0; e < subSize1 / 32; e++){
+						struct parameter_struct{
+						uint32 prop_hash <name="UTF-16 Name Hash">;
+						uint32 ukn1;
+						ushort parameterCount <name="Parameter Count">;
+						ushort fltsSecondCount <name="Second Count">;
+						uint32 ukn2;
+						
+						//float parameter[parameterCount] <name="Parameter">;
+						//if(4 - parameterCount)  float padding[4 - parameterCount] <name="Padding">;
+						
+						local uint64 pos <hidden=true> = FTell();
+						FSeek(pos + 12);
+						float checkFloat;
+						if(checkFloat > 0 && parameterCount == 4 && fltsSecondCount == 1){
+							FSeek(pos);
+							fpos[p] = FTell();
+							p++;
+							float_cc float_RGB;
+						}else{
+							FSeek(pos);
+							float parameter[parameterCount] <name="Parameter">;
+							if(4 - parameterCount)  float padding[4 - parameterCount] <name="Padding">;
+						}
+							
+						}parameters <name="parameter">;
+					}
+				}mdf_parameters <name="MDF Parameters">;
+			}
+			
+			
+			
+			//if(0 < subSize1){
+            //    ubyte ukn2[subSize1] <name="Sub Struct">;
+            //}
+			tex_path mskPath <name="MSK Path">;
+			break;
+			
+		case ItemType_0x1D_029:
+            uint32 ukn1[8];
+			uint32 subSize1 <name="Sub Struct1 Size">;
+			uint32 subSize2 <name="Sub Struct2 Size">;
+			uint32 subSize3 <name="Sub Struct3 Size">;
+			uint32 subCount4 <name="Sub Struct4 Count">;
+			uint32 subCount5 <name="Sub Struct5 Count">;
+			if(0 < subSize1){
+                ubyte ukn2[subSize1] <name="Sub Struct1">;
+            }
+			if(0 < subSize2){
+                ubyte ukn3[subSize2] <name="Sub Struct2">;
+            }
+			if(0 < subSize3){
+                ubyte ukn4[subSize3] <name="Sub Struct3">;
+            }
+			if(0 < subCount4){
+                ubyte ukn5[subCount4 * 16] <name="Sub Struct4">;
+            }
+			if(0 < subCount5){
+                ubyte ukn6[subCount5 * 4] <name="Sub Struct5">;
+            }
+			break;
+			
+		case ItemType_0x1E_030:
+            uint32 ukn1[2];
+			uint32 ukn2;
+			uint32 ukn3;
+			uint32 ukn4[24];
+			uint32 ukn5;
+            ubyte ukn6[ukn2 + ukn3*4 + ukn5];
+			break;
+			
+		case ItemType_0x1F_031:
+            uint32 ukn1[2];
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn2[16];
+			lpos[j] = FTell();
+            j++;
+            large_cc largel_color;
+			uint32 ukn3[10];
+			break;
+			
+		case ItemType_0x20_032:
+            uint32 ukn1[2];
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn2[24];
+			lpos[j] = FTell();
+            j++;
+            large_cc largel_color;
+			uint32 ukn3[8];
+			break;
+			
+		case ItemType_0x21_033:
+            uint32 ukn1[2];
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn2[36];
+			lpos[j] = FTell();
+            j++;
+            large_cc largel_color;
+			uint32 ukn3[13];
+			break;
+			
+		case ItemType_0x22_034:
+            uint32 ukn1[2];
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn2[17];
+			lpos[j] = FTell();
+            j++;
+            large_cc largel_color;
+			uint32 ukn3[8];
+			break;
+			
+		case ItemType_0x37_055:
+            uint32 ukn1[19];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_0x38_056:
+            uint32 ukn1[21];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_TypePolygon:
+            uint32 ukn1[2];
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn2[5];
+			float rotaionX <name="Rotaion X">;
+			float rotaionXRange <name="Rotaion X Range">;
+			float rotaionY <name="Rotaion Y">;
+			float rotaionYRange <name="Rotaion Y Range">;
+			float rotaionZ <name="Rotaion Z">;
+			float rotaionZRange <name="Rotaion Z Range">;
+			float scaleMultiplier <name="Scale Multiplier">;
+			float scaleMultiplierRange <name="Scale Multiplier Range">;
+			float scaleX <name="Scale X">;
+			float scaleXRange <name="Scale X Range">;
+			float scaleY <name="Scale Y">;
+			float scaleYRange <name="Scale Y Range">;
+			uint32 ukn3[4];
+			break;
+			
+		case ItemType_0x3E_062:
+            uint32 ukn1[8];
+            uint32 subSize1 <name="Sub Struct 1 Size">;
+			uint32 subSize2 <name="Sub Struct 2 Size">;
+			uint32 subSize3 <name="Sub Struct 3 Size">;
+            if(0 < subSize1){
+                ubyte ukn2[subSize1] <name="Sub Struct 1">;
+            }
+			if(0 < subSize2){
+                ubyte ukn3[subSize2] <name="Sub Struct 2">;
+            }
+			if(0 < subSize3){
+                ubyte ukn4[subSize3] <name="Sub Struct 3">;
+            }
+			break;
+			
+		case ItemType_0x3F_063:
+            uint32 ukn1[21];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_0x44_068:
+            uint32 ukn1[2];
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn2[13];
+			lpos[j] = FTell();
+            j++;
+            large_cc largel_color;
+			uint32 ukn3;
+			break;
+		
+		case ItemType_0x45_069:
+            uint32 ukn1[11];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_TypeNoDraw:
+            uint32 ukn1[2];
+			spos[i] = FTell();
+            i++;
+            small_cc small_color;
+			spos[i] = FTell();
+            i++;
+            small_cc small_color;
+			uint32 ukn2[13];
+			break;
+			
+		case ItemType_0x4A_074:
+            uint32 ukn1[18];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_0x4C_076:
+            uint32 ukn1[19];
+			break;
+			
+		case ItemType_0x4D_077:
+            uint32 ukn1[15];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_0x4E_078:
+            ubyte ukn[12];
+			break;
+			
+		case ItemType_Velocity3D:
+			uint32 ukn1;
+			uint32 ukn2;
+			float directionXStrength <name="Direction X Strength">;
+            float directionXStrengthRange <name="Direction X Strength Range">;
+            float directionYStrength <name="Direction Y Strength">;
+            float directionYStrengthRange <name="Direction Y Strength Range">;
+            float directionZStrength <name="Direction Z Strength">;
+            float directionZStrengthRange <name="Direction Z Strength Range">;
+			float speed <name="Speed">;
+            float speedRange <name="Speed Range">;
+            float acceleration <name="Acceleration">;
+            float accelerationRange <name="Acceleration Range">;
+			float ukn3[8];
+			uint32 ukn4;
+			float gravity <name="Gravity">;
+            float gravityRange <name="Gravity Range">;
+            uint32 ukn5[8];
+			
+			break;
+			
+		case ItemType_0x50_080:
+            uint32 ukn1[29];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+		
+		case ItemType_0x51_081:
+            ubyte ukn[12];
+			break;
+			
+		case ItemType_RotateAnim:
+            uint32 ukn1;
+            uint32 ukn2;
+			float   rotationSpeedX <name="Rotation Speed X">;
+            float   rotationSpeedXRange <name="Rotation Speed X Range">;
+			float   rotationSpeedY <name="Rotation Speed Y">;
+            float   rotationSpeedYRange <name="Rotation Speed Y Range">;
+			float   rotationSpeedZ <name="Rotation Speed Z">;
+            float   rotationSpeedZRange <name="Rotation Speed Z Range">;
+			float   accelerationX <name="Acceleration X">;
+            float   accelerationXRange <name="Acceleration X Range">;
+			float   accelerationY <name="Acceleration Y">;
+            float   accelerationYRange <name="Acceleration Y Range">;
+			float   accelerationZ <name="Acceleration Z">;
+            float   accelerationZRange <name="Acceleration Z Range">;
+			break;
+			
+		case ItemType_0x53_083:
+            uint32 ukn1[14];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_0x54_084:
+            ubyte ukn[12];
+			break;
+		
+		case ItemType_ScaleAnim:
+            uint32 ukn;
+            float overallScaleSpeed <name="Overall Scale Speed">;
+            float overallScaleSpeedRange <name="Overall Scale Speed Range">;
+            float overallAcceleration <name="Overall Acceleration">;
+            float overallAccelerationRange <name="Overall Acceleration Range">;
+            float scaleSpeedX <name="Scale Speed X">;
+            float scaleSpeedXRange <name="Scale Speed X Range">;
+            float accelerationX <name="Acceleration X">;
+            float accelerationXRange <name="Acceleration X Range">;
+            float scaleSpeedY <name="Scale Speed Y">;
+            float scaleSpeedYRange <name="Scale Speed Y Range">;
+            float accelerationY <name="Acceleration Y">;
+            float accelerationYRange <name="Acceleration Y Range">;
+            float scaleSpeedZ <name="Scale Speed Z">;
+            float scaleSpeedZRange <name="Scale Speed Z Range">;
+            float accelerationZ <name="Acceleration Z">;
+            float accelerationZRange <name="Acceleration Z Range">;
+			break;
+			
+		case ItemType_0x56_086:
+            uint32 ukn1[10];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_0x57_087:
+            ubyte ukn[52];
+            bone_t bone <name="Bone">;
+			break;
+			
+		case ItemType_Life:
+            uint32 ukn1;
+            uint32 fadeInDurationMin <name="FadeInDuration Min">;
+            uint32 fadeInDurationMax <name="FadeInDuration Max">;
+            uint32 durationMin <name="Duration Min">;
+            uint32 durationMax <name="Duration Max">;
+            uint32 fadeOutDurationMin <name="FadeOutDuration Min">;
+            uint32 fadeOutDurationMax <name="FadeOutDuration Max">;
+            uint32 ukn2;
+            uint32 ukn3;
+            uint32 setInfinite <name="Set Infinite">;
+			break;
+			
+		case ItemType_0x5A_090:
+            uint32 ukn1[5];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+		
+		case ItemType_UVSequence:
+			uint32 ukn[3];
+            uint32 startingFrame1 <name="Starting Frame Min">;
+            uint32 startingFrame2 <name="Starting Frame Max">;
+            float animationSpeed1 <name="Animation Speed Min">;
+            float animationSpeed2 <name="Animation Speed Max">;
+            Animation_Mode mode <name="Texture Animation Mode">;
+            uvs_t  uvs <name="UVS Path">;
+			/*uint32  uvsPathSize <name="UVS Path length">;
+			if(0 < uvsPathSize){
+				wchar_t uvsPath[uvsPathSize] <name="UVS Path", bgcolor=0x99FF99, open=suppress>;
+			}*/
+			break;
+			
+		case ItemType_0x5C_092:
+            ubyte ukn[32];
+			break;
+			
+		case ItemType_0x5E_094:
+            ubyte ukn[56];
+			break;
+			
+		case ItemType_0x5F_095:
+            uint32 ukn1[3];
+			spos[i] = FTell();
+            i++;
+            small_cc small_color;
+			uint32 ukn2[38];
+			spos[i] = FTell();
+            i++;
+            small_cc small_color;
+			uint32 ukn3[38];
+			spos[i] = FTell();
+            i++;
+            small_cc small_color;
+			uint32 ukn4[37];
+			uint32 uvs1PathSize <name="UVS 1 Path Size">;
+			uint32 uvs2PathSize <name="UVS 2 Path Size">;
+			uint32 uvs3PathSize <name="UVS 3 Path Size">;
+			if(0 < uvs1PathSize){
+				wchar_t uvsPath1[uvs1PathSize] <name="UVS 1 Path", bgcolor=0x99FF99, open=suppress>;
+			}
+			if(0 < uvs2PathSize){
+				wchar_t uvsPath2[uvs2PathSize] <name="UVS 1 Path", bgcolor=0x99FF99, open=suppress>;
+			}
+			if(0 < uvs3PathSize){
+				wchar_t uvsPath3[uvs3PathSize] <name="UVS 1 Path", bgcolor=0x99FF99, open=suppress>;
+			}
+			
+			break;
+			
+		case ItemType_0x61_097:
+            ubyte ukn[16];
+			break;
+			
+		case ItemType_0x62_098:
+            uint32 ukn1[9];
+			break;
+			
+		case ItemType_EmitterShape3D:
+			uint32 ukn1;
+			float   spreadXMin <name="Spread X Minimum">;
+			float   spreadXMax <name="Spread X Maximum">;
+			float   spreadYMin <name="Spread Y Minimum">;
+			float   spreadYMax <name="Spread Y Maximum">;
+			float   spreadZMin <name="Spread Z Minimum">;
+			float   spreadZMax <name="Spread Z Maximum">;
+			uint32 ukn2;
+			uint32 ukn3;
+			uint32 ukn4;
+			uint32 ukn5;
+			uint32 ukn6;
+			float ukn7;
+			float ukn8;
+			float ukn9;
+			uint32 ukn10;
+			uint32 ukn11;
+			byte ukn12[4];
+			float ukn13;
+			float ukn14;
+			float ukn15;
+			float ukn16;
+			break;
+		
+		case ItemType_0x65_101:
+            uint32 ukn1[11];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+		
+		case ItemType_0x66_102:
+            ubyte ukn[20];
+			break;
+			
+		case ItemType_0x67_103:
+            ubyte ukn[28];
+			break;
+		
+		case ItemType_0x68_104:
+            uint32 ukn1;
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn2[3];
+			break;
+			
+		case ItemType_0x69_105:
+            uint32 ukn1[8];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn3[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_0x6A_106:
+            ubyte ukn[44];
+			break;
+			
+		case ItemType_0x6B_107:
+            ubyte ukn[36];
+			break;
+			
+		case ItemType_0x6D_109:
+            uint32 ukn1[3];
+			spos[i] = FTell();
+            i++;
+            small_cc small_color;
+			uint32 ukn2[14];
+			break;
+		
+		case ItemType_0x70_112:
+            uint32 ukn1[18];
+			lpos[j] = FTell();
+            j++;
+            large_cc largel_color;
+			uint32 ukn2[37];
+			bone_t bone <name="Bone">;
+			uint32 ukn3;
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn4[3];
+			break;
+			
+		case ItemType_0x72_114:
+            uint32 ukn1[2];
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn2[74];
+			ubyte uk3[6];
+			break;
+			
+		case ItemType_0x73_115:
+            uint32 ukn1[33];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn3[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_ShaderSettings:
+            uint32 ukn1;
+			float ukn2;
+			uint32 ukn3;
+			float ukn4;
+			uint32 ukn5;
+			float ukn6;
+			byte ukn7[4];
+			byte ukn8[4] <name="Color?">;
+			float ukn9;
+			float ukn10;
+			float ukn11;
+			float ukn12;
+			float ukn13;
+			float ukn14;
+			uint32 ukn15;
+			uint32 ukn16;
+			uint32 ukn17;
+			float ukn18;
+			float ukn19;
+			float ukn20;
+			float ukn21;
+			float ukn22;
+			float ukn23;
+			uint32 ukn24;
+			float ukn25;
+			float ukn26;
+			float ukn27;
+			float ukn28;
+			uint32 ukn29;
+			float ukn30;
+			float ukn31;
+			float ukn32;
+			float ukn33;
+			float ukn34;
+            uint32 ukn35[8];
+			break;
+			
+		case ItemType_Distortion:
+            uint32 ukn1[5];
+			spos[i] = FTell();
+            i++;
+            small_cc small_color;
+			break;
+		
+		case ItemType_0x7C_124:
+            uint32 ukn[8];
+			break;
+			
+		case ItemType_0x7D_125:
+            ubyte ukn[20];
+			break;
+		
+		case ItemType_0x7E_126:
+            uint32 ukn[2];
+			basic_path ukn2 <name="RTEX Path">;
+			break;
+			
+		case ItemType_0x80_128:
+            ubyte ukn[48];
+			break;
+			
+		case ItemType_0x81_129:
+            ubyte ukn[16];
+			break;
+		
+		case ItemType_PtBehavior:
+            uint32 ukn[2];
+			uint32 scrSize <name="Script Size">;
+			uint32 varCount <name="Script Variable Count">;
+			char   str[scrSize] <name="Script", bgcolor=0xFFFFAA, open=suppress>;
+			for (e = 0; e < varCount; e++){
+			    struct{
+				    uint32 varSize <name="Variable Size">;
+                    uint32 varID <name="Variable Type ID">;
+                    if(varID == 0x0F){
+                        ubyte ukn[8];
+                        spos[i] = FTell();
+                        i++;
+                        small_cc small_color;
+                        char var[varSize-16] <name="Variable", bgcolor=0xA3BECC, open=suppress>;
+                    }else{
+                        ubyte ukn[8];
+				        char  variable[varSize-12] <name="Vairable", bgcolor=0xD6D6D6, open=suppress>;
+                    }
+			    } variable <name="Script Variable">;
+			}
+			break;
+			
+		case ItemType_0x85_133:
+            ubyte ukn[32];
+			break;
+			
+		case ItemType_0x87_135:
+            ubyte ukn[28];
+			break;
+			
+		case ItemType_0x88_136:
+            ubyte ukn[20];
+			break;
+			
+		case ItemType_0x89_137:
+            uint32 ukn1[6];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn3[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_0x8A_138:
+            ubyte ukn[20];
+			break;
+			
+		case ItemType_0x8C_140:
+            ubyte ukn[24];
+			break;
+		
+		case ItemType_0x8D_141:
+            ubyte ukn[32];
+			break;
+		
+		case ItemType_0x8E_142:
+            ubyte ukn[32];
+			break;
+			
+		case ItemType_0x91_145:
+            ubyte ukn[56];
+			break;
+			
+		case ItemType_0x96_150:
+            ubyte ukn[40];
+			break;
+			
+		case ItemType_0x97_151:
+            uint32 ukn1[8];
+			uint32 subSize1 <name="Sub Struct1 Size">;
+			uint32 subSize2 <name="Sub Struct2 Size">;
+			uint32 subSize3 <name="Sub Struct3 Size">;
+			if(0 < subSize1){
+                ubyte ukn2[subSize1] <name="Sub Struct1">;
+            }
+			if(0 < subSize2){
+                ubyte ukn3[subSize2] <name="Sub Struct2">;
+            }
+			if(0 < subSize3){
+                ubyte ukn4[subSize3] <name="Sub Struct3">;
+            }
+			break;
+			
+		case ItemType_0x9F_159:
+            ubyte ukn[20];
+			break;
+		
+		case ItemType_0xA0_160:
+            ubyte ukn[64];
+			break;
+			
+		case ItemType_PtColor:
+            uint32 ukn[3];
+            spos[i] = FTell();
+            i++;
+            small_cc small_color;
+			break;
+			
+		case ItemType_PtColorClip:
+            uint32 ukn1;
+            uint32 secChunkID <name="Second Chunk Type ID">;
+            uint32 ukn2;
+            Cycle_Loop loop <name="Loop State", format=hex, bgcolor=0x99CCFF>;
+            float  loopTime <name="Loop Duration", bgcolor=0xFF9BDE>;
+            uint32 ukn3[3];
+            uint32 firstChunkSize <name="First Chunk Size">;
+            uint32 secondChunkSize <name="Second Chunk Size">;
+            uint32 thirdChunkSize <name="Third Chunk Size">;
+            backPos = FTell();
+            if(0 < firstChunkSize){
+                struct{
+                    for(e = 0; e < firstChunkSize/8; e++){
+                        uint32 colorBitCount <name="Color Count">;
+                        colorBitCount_arr[e] = colorBitCount;
+                        uint32 intCount <name="Color INT Count">;
+                        intCount_arr[e] = intCount;
+                    }
+                } firstChunk <name="First Chunk (Second Chunk Data)", bgcolor=0xFFBD9B>;
+            }
+            if(0 < secondChunkSize){
+                backPoseSC = FTell();
+                switch (secChunkID) {
+                    case 0x0000000F:
+                        struct{
+							for(e = 0; e < 4; e++){
+								switch(e+1){
+									case 1:
+										for(c5it = 0; c5it < colorBitCount_arr[e]; c5it++){
+											struct{
+												float appearTime <name="Appear Time", bgcolor=0xA2A2A2>;
+												uint32 ukn;
+												if( colorBitCount_arr[3] > c5it){
+													redPos[red] = FTell();
+													red++;
+												} else {
+													alphaLessRedPos[alphaLessRed] = FTell();
+													alphaLessRed++;
+												}
+												ubyte red <name="Red", bgcolor=0x9B9BFF>;
+												ubyte ukn2[3];
+											} redSt <name="Red">;
+										}
+										break;
+										
+									case 2:
+										for(c5it = 0; c5it < colorBitCount_arr[e]; c5it++){
+											struct{
+												float appearTime <name="Appear Time", bgcolor=0xA2A2A2>;
+												uint32 ukn;
+												if( colorBitCount_arr[3] > c5it){
+													greenPos[green] = FTell();
+													green++;
+												} else {
+													alphaLessGreenPos[alphaLessGreen] = FTell();
+													alphaLessGreen++;
+												}
+												ubyte green <name="Green", bgcolor=0x67AA67>;
+												ubyte ukn2[3];
+											} greenSt <name="Green">;
+										}
+										break;
+										
+									case 3:
+										for(c5it = 0; c5it < colorBitCount_arr[e]; c5it++){
+											struct{
+												float appearTime <name="Appear Time", bgcolor=0xA2A2A2>;
+												uint32 ukn;
+												if( colorBitCount_arr[3] > c5it){
+													bluePos[blue] = FTell();
+													blue++;
+												} else {
+													alphaLessBluePos[alphaLessBlue] = FTell();
+													alphaLessBlue++;
+												}
+												ubyte blue <name="Blue", bgcolor=0xFF9B9B>;
+												ubyte ukn2[3];
+											} blueSt <name="Blue">;
+										}
+										break;
+										
+									case 4:
+										for(c5it = 0; c5it < colorBitCount_arr[e]; c5it++){
+											struct{
+												float appearTime <name="Appear Time", bgcolor=0xA2A2A2>;
+												uint32 ukn;
+												alphaPos[alpha] = FTell();
+												alpha++;
+												ubyte alpha <name="Alpha", bgcolor=0x9BFFFF>;
+												ubyte ukn2[3];
+											} alphaSt <name="Alpha">;
+										}
+										break;
+									default:
+										break;
+								}
+							}
+						}secondChunk <name="Second Chunk (Color & Alpha)">;
+                        break;
+                    case 0x00000008:
+						for(c5it = 0; c5it < colorBitCount_arr[0]; c5it++){
+							struct{
+								float appearTime <name="Appear Time", bgcolor=0xA2A2A2>;
+								uint32 ukn;
+								onlyAlphaPos[onlyAlpha]= FTell();
+								onlyAlpha++;
+								ubyte alpha <name="Alpha", bgcolor=0x9BFFFF>;
+								ubyte ukn2[3];
+							} alphaSt <name="Alpha">;
+						}
+						break;
+                    case 0x00000007:
+                    case 0x0000000E:
+                        struct{
+							for(e = 0; e < 3; e++){
+								switch(e+1){
+									case 1:
+										for(c5it = 0; c5it < colorBitCount_arr[e]; c5it++){
+											struct{
+												float appearTime <name="Appear Time", bgcolor=0xA2A2A2>;
+												uint32 ukn;
+												alphaLessRedPos[alphaLessRed] = FTell();
+												alphaLessRed++;
+												ubyte red <name="Red", bgcolor=0x9B9BFF>;
+												ubyte ukn2[3];
+											} redSt <name="Red">;
+										}
+										break;
+										
+									case 2:
+										for(c5it = 0; c5it < colorBitCount_arr[e]; c5it++){
+											struct{
+												float appearTime <name="Appear Time", bgcolor=0xA2A2A2>;
+												uint32 ukn;
+												alphaLessGreenPos[alphaLessGreen] = FTell();
+												alphaLessGreen++;
+												ubyte green <name="Green", bgcolor=0x67AA67>;
+												ubyte ukn2[3];
+											} greenSt <name="Green">;
+										}
+										break;
+										
+									case 3:
+										for(c5it = 0; c5it < colorBitCount_arr[e]; c5it++){
+											struct{
+												float appearTime <name="Appear Time", bgcolor=0xA2A2A2>;
+												uint32 ukn;
+												alphaLessBluePos[alphaLessBlue] = FTell();
+												alphaLessBlue++;
+												ubyte blue <name="Blue", bgcolor=0xFF9B9B>;
+												ubyte ukn2[3];
+											} blueSt <name="Blue">;
+										}
+										break;
+										
+									default:
+										break;
+								}
+							}
+						}secondChunk <name="Second Chunk (Color & Alpha)">;
+						break;
+                    default:
+                        struct{
+                            uint32 ukn[secondChunkSize/4];
+                        } secondChunk <name="Second Chunk">;
+                        break;
+                }
+            }
+            if(0 < thirdChunkSize){
+                struct{
+                    uint32 ukn[thirdChunkSize/4];
+                } thirdChunk <name="Third Chunk", bgcolor=0x9BFFF9B>;
+            }
+            FSeek(backPos + firstChunkSize + secondChunkSize + thirdChunkSize);
+			break;
+		
+		case ItemType_0xA4_164:
+            uint32 ukn1[4];
+			float unk2;
+			spos[i] = FTell();
+            i++;
+            small_cc small_color1;
+			spos[i] = FTell();
+            i++;
+            small_cc small_color2;
+			spos[i] = FTell();
+            i++;
+            small_cc small_color3;
+			break;
+		
+		case ItemType_0xA6_166:
+            ubyte ukn[16];
+			break;
+			
+		case ItemType_0xA7_167:
+            uint32 ukn1[9];
+            uint32 subSize1 <name="Sub Struct1 Size">;
+			uint32 subSize2 <name="Sub Struct2 Size">;
+			uint32 ukn2[2];
+            if(0 < subSize1){
+                ubyte ukn3[subSize1] <name="Sub Struct1">;
+            }
+			if(0 < subSize2){
+                ubyte ukn4[subSize2] <name="Sub Struct2">;
+            }
+			break;
+			
+		case ItemType_0xA8_168:
+            ubyte ukn[108];
+			uint32 mapSize <name="Map Size">;
+			uint32 pathSize1 <name="Path 1 Size">;
+			uint32 pathSize2 <name="Path 2 Size">;
+			uint32 pathSize3 <name="Path 3 Size">;
+			uint32 pathSize4 <name="Path 4 Size">;
+			if(0 < mapSize){
+                wchar_t mapName[mapSize] <name="Map", bgcolor=0x99FF99>;
+            }
+			if(0 < pathSize1){
+                wchar_t path1[pathSize1] <name="Path 1", bgcolor=0x99FF99>;
+            }
+			if(0 < pathSize2){
+                wchar_t path2[pathSize2] <name="Path 2", bgcolor=0x99FF99>;
+            }
+			if(0 < pathSize3){
+                wchar_t path3[pathSize3] <name="Path 3", bgcolor=0x99FF99>;
+            }
+			if(0 < pathSize4){
+                wchar_t path4[pathSize4] <name="Path 4", bgcolor=0x99FF99>;
+            }
+			break;
+			
+		case ItemType_0xAD_173:
+            ubyte ukn[84];
+			break;
+			
+		case ItemType_0xAE_174:
+            uint32 ukn1[8];
+			uint32 subSize1 <name="Sub Struct1 Size">;
+			uint32 subSize2 <name="Sub Struct2 Size">;
+			uint32 subSize3 <name="Sub Struct3 Size">;
+			if(0 < subSize1){
+                ubyte ukn2[subSize1] <name="Sub Struct1">;
+            }
+			if(0 < subSize2){
+                ubyte ukn3[subSize2] <name="Sub Struct2">;
+            }
+			if(0 < subSize3){
+                ubyte ukn4[subSize3] <name="Sub Struct3">;
+            }
+			break;
+			
+		case ItemType_0xAF_175:
+            uint32 ukn1[22];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn3[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_0xB0_176:
+            ubyte ukn[64];
+			break;
+			
+		case ItemType_0xB6_182:
+            ubyte ukn[56];
+			break;
+			
+		case ItemType_0xB7_183:
+            ubyte ukn[68];
+			break;
+			
+		case ItemType_0xBD_189:
+            ubyte ukn[28];
+			break;
+			
+		case ItemType_0xBE_190:
+            uint32 ukn3[9];
+            bone_t bone <name="Bone">;
+			break;
+			
+		case ItemType_0xBF_191:
+            uint32 ukn1[8];
+			uint32 subSize1 <name="Sub Struct1 Size">;
+			uint32 subSize2 <name="Sub Struct2 Size">;
+			uint32 subSize3 <name="Sub Struct3 Size">;
+			if(0 < subSize1){
+                ubyte ukn2[subSize1] <name="Sub Struct1">;
+            }
+			if(0 < subSize2){
+                ubyte ukn3[subSize2] <name="Sub Struct2">;
+            }
+			if(0 < subSize3){
+                ubyte ukn4[subSize3] <name="Sub Struct3">;
+            }
+			break;
+			
+		case ItemType_0xC1_193:
+            ubyte ukn[30];
+			break;
+			
+		case ItemType_0xC6_198:
+            ubyte ukn[4];
+			break;
+			
+		case ItemType_0xC7_199:
+            ubyte ukn[16];
+			break;
+			
+		case ItemType_0xCB_203:
+            ubyte ukn[12];
+			break;
+			
+		case ItemType_0xCC_204:
+            ubyte ukn[84];
+			break;
+			
+		case ItemType_0xCD_205:
+            ubyte ukn[36];
+			break;
+			
+		case ItemType_0xCE_206:
+            uint32 ukn1[9];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn3[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_0xD0_208:
+            uint32 ukn[16];
+			break;
+		
+		case ItemType_0xD3_211:
+            uint32 ukn1[4];
+            uint32 subSize <name="Sub Struct Size">;
+			ubyte ukn2[60];
+            if(0 < subSize){
+                ubyte ukn3[subSize * 28] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_0xD4_212:
+            ubyte ukn[4];
+			break;
+		
+		case ItemType_0xD7_215:
+            ubyte ukn[80];
+			break;
+			
+		case ItemType_0xD8_216:
+            uint32 ukn1[8];
+			uint32 subSize1 <name="Sub Struct1 Size">;
+			uint32 subSize2 <name="Sub Struct2 Size">;
+			uint32 subSize3 <name="Sub Struct3 Size">;
+			if(0 < subSize1){
+                ubyte ukn2[subSize1] <name="Sub Struct1">;
+            }
+			if(0 < subSize2){
+                ubyte ukn3[subSize2] <name="Sub Struct2">;
+            }
+			if(0 < subSize3){
+                ubyte ukn4[subSize3] <name="Sub Struct3">;
+            }
+			break;
+		
+		case ItemType_0xD9_217:
+            uint32 ukn1[21];
+			break;
+			
+		case ItemType_0xDB_219:
+            ubyte ukn[52];
+			break;
+			
+		case ItemType_0xDC_220:
+            uint32 ukn1[7];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn3[subSize] <name="Sub Struct">;
+            }
+			break;
+		
+		case ItemType_0xDF_223:
+            uint32 ukn1[9];
+            uint32 texPathSize <name="Texture Path Size">;
+            if(0 < texPathSize){
+                wchar_t texPath[texPathSize/2] <name="Texture Path", bgcolor=0x99FF99>;
+            }
+			break;
+			
+		case ItemType_0xE5_229:
+            ubyte ukn1[14];
+            basic_path efcsvPath <name="EFCSV Path">;
+			basic_path ukn2 <name="Unknown Path">;
+			basic_path ukn3 <name="Unknown Path">;
+			basic_path ukn4 <name="Unknown Path">;
+			break;
+			
+		case ItemType_0xE9_233:
+            ubyte ukn[8];
+			break;
+		
+		case ItemType_0xEA_234:
+            ubyte ukn[4];
+			break;
+			
+		case ItemType_0xF1_241:
+            uint32 ukn1[2];
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn2[16];
+			break;
+		
+		case ItemType_0xF2_242:
+            uint32 ukn1[16];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+		case ItemType_0xF3_243:
+            uint32 ukn1[2];
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn2[6];
+			float rotaionX <name="Rotaion X">;
+			float rotaionXRange <name="Rotaion X Range">;
+			float rotaionY <name="Rotaion Y">;
+			float rotaionYRange <name="Rotaion Y Range">;
+			float rotaionZ <name="Rotaion Z">;
+			float rotaionZRange <name="Rotaion Z Range">;
+			float scaleMultiplier <name="Scale Multiplier">;
+			float scaleMultiplierRange <name="Scale Multiplier Range">;
+			float scaleX <name="Scale X">;
+			float scaleXRange <name="Scale X Range">;
+			float scaleY <name="Scale Y">;
+			float scaleYRange <name="Scale Y Range">;
+			break;
+			
+		case ItemType_0xF5_245:
+            uint32 ukn1[2];
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn2[12];
+			break;
+		
+		case ItemType_0xF6_246:
+            uint32 ukn1[11];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+		
+		case ItemType_0xF7_247:
+            uint32 ukn1[2];
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn2[22];
+			break;
+		
+		case ItemType_0xF9_249:
+			uint32 ukn1[5];
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 frameCount <name="Frame Count">;
+			uint32 startingFrameMin <name="Starting Frame Min">;
+			uint32 startingFrameMax <name="Starting Frame Max">;
+			float animationSpeedMin <name="Animation Speed Min">;
+			float animationSpeedMax <name="Animation Speed Max">;
+			float acceleration <name="Acceleration">;
+            float accelerationRange <name="Acceleration Range">;
+			Animation_Mode_Mesh mode <name="Animation Mode">;
+			uint32 ukn2[2];
+			float rotationX <name="Rotation X">;
+            float rotationXRange <name="Rotation X Range">;
+            float rotationY <name="Rotation Y">;
+            float rotationYRange <name="Rotation Y Range">;
+            float rotationZ <name="Rotation Z">;
+            float rotationZRange <name="Rotation Z Range">;
+            float scaleX <name="Scale X">;
+            float scaleXRange <name="Scale X Range">;
+            float scaleY <name="Scale Y">;
+            float scaleYRange <name="Scale Y Range">;
+            float scaleZ <name="Scale Z">;
+            float scaleZRange <name="Scale Z Range">;
+            float scaleMultiplier <name="Scale Multiplier">;
+            float scaleMultiplierRange <name="Scale Multiplier Range">;
+			uint32 ukn3[2];
+			mesh_path mesh1Path1 <name="Mesh 1 Path">;
+			mesh_path mesh1Path2 <name="Mesh 2 Path">;
+			mdf_path mdfPath <name="MDF Path">;
+			uint32 subSize1 <name="MDF Parameters Struct Size">;
+			
+			if(subSize1 > 0){
+				struct {
+					for (e = 0; e < subSize1 / 32; e++){
+						struct {
+							uint32 prop_hash <name="UTF-16 Name Hash">;
+							uint32 ukn1;
+							ushort parameterCount <name="Parameter Count">;
+							ushort fltsSecondCount <name="Second Count">;
+							uint32 ukn2;
+							
+							//float parameter[parameterCount] <name="Parameter">;
+							//if(4 - parameterCount)  float padding[4 - parameterCount] <name="Padding">;
+							
+							local uint64 pos <hidden=true> = FTell();
+							FSeek(pos + 12);
+							float checkFloat;
+							if(checkFloat > 0 && parameterCount == 4 && fltsSecondCount == 1){
+								FSeek(pos);
+								fpos[p] = FTell();
+								p++;
+								float_cc float_RGB;
+							}else{
+								FSeek(pos);
+								float parameter[parameterCount] <name="Parameter">;
+								if(4 - parameterCount)  float padding[4 - parameterCount] <name="Padding">;
+							}
+						}parameters <name="parameter">;
+					}
+				}mdf_parameters <name="MDF Parameters">;
+			}
+			//if(0 < subSize1){
+            //    ubyte ukn3[subSize1] <name="Sub Struct">;
+            //}
+			tex_path mskPath <name="MSK Path">;
+			break;
+			
+		case ItemType_0xFB_251:
+			uint32 ukn1[5];
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 frameCount <name="Frame Count">;
+			uint32 startingFrameMin <name="Starting Frame Min">;
+			uint32 startingFrameMax <name="Starting Frame Max">;
+			float animationSpeedMin <name="Animation Speed Min">;
+			float animationSpeedMax <name="Animation Speed Max">;
+			float acceleration <name="Acceleration">;
+            float accelerationRange <name="Acceleration Range">;
+			Animation_Mode_Mesh mode <name="Animation Mode">;
+			uint32 ukn2[2];
+			float rotationX <name="Rotation X">;
+            float rotationXRange <name="Rotation X Range">;
+            float rotationY <name="Rotation Y">;
+            float rotationYRange <name="Rotation Y Range">;
+            float rotationZ <name="Rotation Z">;
+            float rotationZRange <name="Rotation Z Range">;
+            float scaleX <name="Scale X">;
+            float scaleXRange <name="Scale X Range">;
+            float scaleY <name="Scale Y">;
+            float scaleYRange <name="Scale Y Range">;
+            float scaleZ <name="Scale Z">;
+            float scaleZRange <name="Scale Z Range">;
+            float scaleMultiplier <name="Scale Multiplier">;
+            float scaleMultiplierRange <name="Scale Multiplier Range">;
+			uint32 ukn3[4];
+			uint32 trailLength <name="Trail Length ">;
+			float ukn4;
+			uint32 ukn5;
+			uint32 detachFromBoneMin <name="Frames Before Detaching from Bone Min">;
+			uint32 detachFromBoneMax <name="Frames Before Detaching from Bone Max">;
+            float ukn6[6];
+			uint32 ukn7; // Unsure if int or float
+			float ukn8[10];
+			mesh_path mesh1Path1 <name="Mesh 1 Path">;
+			mesh_path mesh1Path2 <name="Mesh 2 Path">;
+			mdf_path mdfPath <name="MDF Path">;
+			uint32 subSize1 <name="MDF Parameters Struct Size">;
+			
+			if(subSize1 > 0){
+				struct {
+					for (e = 0; e < subSize1 / 32; e++){
+						struct {
+							uint32 prop_hash <name="UTF-16 Name Hash">;
+							uint32 ukn1;
+							ushort parameterCount <name="Parameter Count">;
+							ushort fltsSecondCount <name="Second Count">;
+							uint32 ukn2;
+							
+							//float parameter[parameterCount] <name="Parameter">;
+							//if(4 - parameterCount)  float padding[4 - parameterCount] <name="Padding">;
+							
+							local uint64 pos <hidden=true> = FTell();
+							FSeek(pos + 12);
+							float checkFloat;
+							if(checkFloat > 0 && parameterCount == 4 && fltsSecondCount == 1){
+								FSeek(pos);
+								fpos[p] = FTell();
+								p++;
+								float_cc float_RGB;
+							}else{
+								FSeek(pos);
+								float parameter[parameterCount] <name="Parameter">;
+								if(4 - parameterCount)  float padding[4 - parameterCount] <name="Padding">;
+							}
+						}parameters <name="parameter">;
+					}
+				}mdf_parameters <name="MDF Parameters">;
+			}
+			
+			
+			
+			//if(0 < subSize1){
+            //    ubyte ukn3[subSize1] <name="Sub Struct">;
+            //}
+			tex_path mskPath <name="MSK Path">;
+			break;
+			
+		case ItemType_0xFC_252:
+            uint32 ukn1[8];
+			uint32 subSize1 <name="Sub Struct1 Size">;
+			uint32 subSize2 <name="Sub Struct2 Size">;
+			uint32 subSize3 <name="Sub Struct3 Size">;
+			uint32 subCount4 <name="Sub Struct4 Count">;
+			uint32 subCount5 <name="Sub Struct5 Count">;
+			if(0 < subSize1){
+                ubyte ukn2[subSize1] <name="Sub Struct1">;
+            }
+			if(0 < subSize2){
+                ubyte ukn3[subSize2] <name="Sub Struct2">;
+            }
+			if(0 < subSize3){
+                ubyte ukn4[subSize3] <name="Sub Struct3">;
+            }
+			if(0 < subCount4){
+                ubyte ukn5[subCount4 * 16] <name="Sub Struct4">;
+            }
+			if(0 < subCount5){
+                ubyte ukn6[subCount5 * 4] <name="Sub Struct5">;
+            }
+			break;
+			
+		case ItemType_0xFD_253:
+            uint32 ukn1[22];
+            uint32 subSize <name="Sub Struct Size">;
+            if(0 < subSize){
+                ubyte ukn2[subSize] <name="Sub Struct">;
+            }
+			break;
+			
+			
+		default:
+			Exit(FTell()-4);
+			break;
+
+//End of the function
+	}
+					
+}
+
+string EFX_Block_Name(struct Extra_EFX& input){
+    if(input.link){
+        return "Linked EFX - ";
+    } else{
+        return "Embedded EFX - ";
+    }
+}
+
+wstring MSK4_Name(struct MSK4& input){
+    wstring name = eff_name_utf8_hash_decode(input.utf8Hash);
+    if(name != "__NULL__"){
+        return name;
+    }else{
+        return "MSK4 Header";
+    }
+}
+
+wstring Modifier_Name(struct Modifier& input){
+    wstring name = eff_name_utf8_hash_decode(input.utf8Hash);
+    if(name != "__NULL__"){
+        return name;
+    }else{
+        return "Modifier";
+    }
+}
+
+wstring Effect_Name(struct Effect& input){
+    //wstring name = eff_name_utf8_hash_decode(input.utf8Hash);
+    //if(name != "__NULL__"){
+        //return name;
+    //}else{
+        return "Effect";
+    //}
+}
+
+wstring Cnd_Block_Name(struct Cnd_Block& input){
+    wstring name;
+    if(name != "__NULL__"){
+        return name;
+    }else{
+        return "Condition";
+    }
+}
+
+void EFXTemplate(){
+	struct{
+		char    magic[4] <name="File Magic", open=suppress>;
+		uint32  ukn;
+		uint32  effectCount <bgcolor=0xFBFFD9, name="Effect Count">;
+		uint32  nameBuffSize <bgcolor=0xDCDCFF, name="Name Buffer Size">;
+		uint32  efxCount <bgcolor=0xFFC1E1, name="Linked EFX Count">;
+		uint32  msk4Count <bgcolor=0xFFC1C1, name="MSK4 Count">;
+		uint32  modifierCount <bgcolor=0xFF99E6, name="Modifier Count">;
+		uint32  cndBlockCount <bgcolor=0xFFB7FF, name="Condition Block Count">;
+		uint32  cndBuffSize <bgcolor=0xA0FFFF,name="Condition Block Buffer Size">;
+		uint32  boneCount <bgcolor=0xA0FFFF>;
+		uint32  boneAttributeEntryCount <bgcolor=0xA0FFFF>;
+		uint32  ukn3 <bgcolor=0xA0FFFF>;
+	} Header <name="EFX Header">;
+	
+    if(Header.nameBuffSize){
+	    struct{
+            local uint64 bufferStart <hidden=true> = FTell();
+            while(true){
+                struct{
+                    if(ReadStringLength(FTell()) > 2) string effName <name="Effect Name">; else if (ReadWStringLength(FTell()) > 2) wstring effName <name="Effect Name">; else if(ReadWStringLength(FTell()) == 2) wstring effName <name="Effect Name">;else string effName <name="Effect Name">;
+                }bufferStr <name="String">;
+	    	    //ubyte    bfr[Header.nameBuffSize] <bgcolor=0xD4FFE6, name="Buffer", open=suppress>;
+                if(FTell() >= bufferStart + Header.nameBuffSize) break;
+            }
+            FSeek(bufferStart + Header.nameBuffSize);
+	    }nameBuffer <bgcolor=0xD4FFE6, name="Name Buffer">;
+    }
+	
+	if (Header.modifierCount > 0){
+        struct{
+		    for (d = 0; d < Header.modifierCount; d++){
+			    struct Modifier{
+                    uint32 utf16Hash <name="UTF-16 Name Hash">;
+                    uint32 utf8Hash <name="UTF-8 Name Hash">;
+                    float  ukn;
+                    float  param <name="Parameter">;
+                    float  ukn;
+                    float  ukn;
+			    }modifier;
+		    }
+        }modifiers <name="Modifiers">;
+	}
+	
+	if(Header.boneCount){
+		struct{
+			for (d = 0; d < Header.boneCount; d++){
+				struct{
+					uint32	boneV1 <bgcolor=0xE4FFD6>;
+					uint32	boneV2 <bgcolor=0xE4FFD6>;
+				}boneValue <name="Bone Value">;
+			}
+		}boneValues <name="Bone Values">;
+	}
+	
+	if(Header.boneAttributeEntryCount){
+		struct{
+			for (d = 0; d < Header.boneAttributeEntryCount; d++){
+				ushort	boneAttr <bgcolor=0xF4FFC6>;
+			}
+		}boneAttribute <name="Bone Attribute">;
+	}
+	
+	
+	
+	
+	
+	if (0 < Header.efxCount){
+		for(f = 0; f < Header.efxCount; f++){
+			struct Extra_EFX {
+                local ubyte link <hidden=true> = false;
+				uint32 ukn;
+                uint32 utf8Hash <name="UTF-8 Hash">;
+				uint32 ukn;
+				uint32 ukn;
+				uint32 ukn;
+				uint32 efxSize <name="Path/EFX Size">;
+				local char efxID[4] <hidden=true, open=suppress>;
+                ReadBytes(efxID, FTell(), 4);
+				if(efxID == "efxr"){
+					EFXTemplate();
+				} else{
+                    link = true;
+					wchar_t efxPath[efxSize/2] <name="Linked EFX Path", bgcolor=0xFFC1E1, open=suppress>;
+				}
+			} efxHeader <name=EFX_Block_Name>;
+		}
+	}
+	
+
+	if (Header.msk4Count > 0){
+        struct {
+		    for (c = 0; c < Header.msk4Count; c++){
+                struct MSK4 {
+                    local uint32 msk4mod <hidden=true, format=hex> = ReadUInt(FTell() + 12);
+                    uint32 ukn1;
+                    uint32 utf8Hash <name="UTF-8 Name Hash">;
+                    uint32 ukn2[6];
+                    float  ukn3[3];
+                    if(msk4mod != 0xC9) msk4_t msk4 <name="MSK4 Path", open=suppress>;
+			    }msk4Header;
+		    }
+        } msk4Headers <name="MSK4 Headers">;
+	}
+	
+	
+	
+	
+	
+	
+    if(Header.effectCount){
+        struct{
+			for (a = 0; a < Header.effectCount; a++){
+				struct Effect{
+					uint32 eff_index <name="Effect Index">;
+					uint32 utf8Hash <name="Name Hash">;
+					uint32 ukn;
+					uint32 SegmentCount <name="Segment Count">;
+						for (b = 0; b < SegmentCount; b++){
+							struct Segment{
+								EffectGraphType typeId <name="Item Type ID", format=hex>;
+								HeaderKind(typeId);
+							}segment <name="Segment", read=GetSegmentName>;
+						}
+			
+				}effect <name=Effect_Name>;
+			}
+        }effects <name="Effects">;
+    }
+	
+	if (0 < Header.cndBlockCount){
+        struct{
+    			for (g = 0; g < Header.cndBlockCount; g++){
+				struct Cnd_Block{
+					uint32 utf16Hash <bgcolor=0x319fff, name="UTF-16 Name Hash">;
+					uint32 utf8Hash <bgcolor=0x9494FF, name="UTF-8 Name Hash">;
+					uint32 indexCount <name="Index Count", bgcolor=0x00BD00>;
+					uint32 effectIndex[indexCount] <bgcolor=0x99FF99, name="Effect Index">;
+				} cndBlock <name=Cnd_Block_Name>;
+			}
+        }cndBlocks <name="Condition Blocks">;
+	}
+	
+	
+	
+	//struct{
+	ubyte uknEndStruct[8];
+	if(uknEndStruct[0] == 2){
+		for (g = 0; g < uknEndStruct[0]; g++){
+			struct{
+				uint32 endStructPathSize <name="End Struct Path Size">;
+				wchar_t endStructPath[endStructPathSize/2] <name="End Struct Path">;
+			}uknEndStructPath;
+	}
+	}
+	
+    //}uknEndStruct <name="Condition Blocks">;
+	
+}
+
+EFXTemplate();
+
+if(h+i+j+red+green+blue+alpha > 0){
+    FSeek(0);
+	struct{
+		if(0 < i){
+			for(z = 0; z < i; z++){
+				FSeek(spos[z]);
+                small_cc small_color;
+			}
+		}
+
+		if(0 < h){
+			for(z = 0; z < h; z++){
+				FSeek(mpos[z]);
+                mid_cc mid_color;
+			}
+		}
+
+		if(0 < j){
+			for(z = 0; z < j; z++){
+				FSeek(lpos[z]);
+                large_cc largel_color;
+			}
+		}
+		if(0 < red+green+blue+alpha){
+            FSeek(0);
+            struct{
+			    for(z = 0; z < red; z++){
+                    FSeek(redPos[z]-8);
+                    struct{
+				        FSeek(redPos[z]);
+                        ubyte red <name="Red">;
+				        FSeek(greenPos[z]);
+                        ubyte green <name="Green">;
+				        FSeek(bluePos[z]);
+                        ubyte blue <name="Blue">;
+				        FSeek(alphaPos[z]);
+                        ubyte alpha <name="Alpha">;
+				        FSeek(redPos[z]-8);
+                        float redAppearTime <name="Red Appear Time">;
+				        FSeek(greenPos[z]-8);
+                        float greenAppearTime <name="Green Appear Time">;
+				        FSeek(bluePos[z]-8);
+                        float blueAppearTime <name="Blue Appear Time">;
+				        FSeek(alphaPos[z]-8);
+                        float alphaAppearTime <name="Alpha Appear Time">;
+                        FSkip(8);
+                    } cyclingColors <name="Cycling Colors (RGBA)">;
+                    FSeek(4);
+			    }
+            } cycle <name="Cycling Colors (RGBA)">;
+		}
+		if(0 < onlyAlpha){
+            FSeek(0);
+            struct{
+		        for(z = 0; z < onlyAlpha; z++){
+                    FSeek(onlyAlphaPos[z]-8);
+                    struct{
+				        FSeek(onlyAlphaPos[z]);
+                        ubyte alpha <name="Alpha">;
+				        FSeek(onlyAlphaPos[z]-8);
+                        float alphaAppearTime <name="Alpha Appear Time">;
+                        FSkip(8);
+                    } cyclingColors <name="Cycling Alphas">;
+		        }
+            FSeek(4);
+            } cycle <name="Cycling Alphas">;
+		}
+		if(0 < alphaLessRed+alphaLessGreen+alphaLessBlue){
+            FSeek(0);
+            struct{
+		        for(z = 0; z < alphaLessRed; z++){
+                    FSeek(alphaLessRedPos[z]-8);
+                    struct{
+				        FSeek(alphaLessRedPos[z]);
+                        ubyte noAlphaRed <name="Red">;
+				        FSeek(alphaLessGreenPos[z]);
+                        ubyte noAlphaGreen <name="Green">;
+				        FSeek(alphaLessBluePos[z]);
+                        ubyte noAlphaBlue <name="Blue">;
+				        FSeek(alphaLessRedPos[z]-8);
+                        float noAlphaRedAppearTime <name="Red Appear Time">;
+				        FSeek(alphaLessGreenPos[z]-8);
+                        float noAlphaGreenAppearTime <name="Green Appear Time">;
+				        FSeek(alphaLessBluePos[z]-8);
+                        float noAlphaBlueAppearTime <name="Blue Appear Time">;
+                        FSkip(8);
+                    } cyclingColors <name="Cycling Colors (RGB)">;
+                    FSeek(4);
+			    }
+            } cycle <name="Cycling Colors (RGB)">;
+		}
+		if(0 < p){
+			for(z = 0; z < p; z++){
+				FSeek(fpos[z]);
+                float_cc float_RGB;
+			}
+		}
+        FSeek(4);
+	} colorCodes <name="Color Codes">;
+}
