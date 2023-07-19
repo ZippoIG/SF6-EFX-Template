@@ -2001,14 +2001,14 @@ void HeaderKind(EffectGraphType typeId){
 				    uint32 varSize <name="Variable Size">;
                     uint32 varID <name="Variable Type ID">;
                     if(varID == 0x0F){
-                        ubyte ukn[8];
+                        ubyte ukn[12];
                         spos[i] = FTell();
                         i++;
                         small_cc small_color;
-                        char var[varSize-16] <name="Variable", bgcolor=0xA3BECC, open=suppress>;
+                        char var[varSize-20] <name="Variable", bgcolor=0xA3BECC, open=suppress>;
                     }else{
-                        ubyte ukn[8];
-				        char  variable[varSize-12] <name="Vairable", bgcolor=0xD6D6D6, open=suppress>;
+                        ubyte ukn[12];
+				        char  variable[varSize-16] <name="Vairable", bgcolor=0xD6D6D6, open=suppress>;
                     }
 			    } variable <name="Script Variable">;
 			}
