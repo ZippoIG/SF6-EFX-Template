@@ -48,6 +48,9 @@ enum EffectGraphType
 	ItemType_0x20_032 = 0x20,
 	ItemType_0x21_033 = 0x21,
 	ItemType_0x22_034 = 0x22,
+	ItemType_0x2B_043 = 0x2B,
+	ItemType_0x34_052 = 0x34,
+	ItemType_0x35_053 = 0x35,
 	ItemType_0x37_055 = 0x37,
 	ItemType_0x38_056 = 0x38,
 	ItemType_TypePolygon = 0x3D,
@@ -141,6 +144,7 @@ enum EffectGraphType
 	ItemType_0xDB_219 = 0xDB,
 	ItemType_0xDC_220 = 0xDC,
 	ItemType_0xDF_223 = 0xDF,
+	ItemType_0xE4_228 = 0xE4,
 	ItemType_0xE5_229 = 0xE5,
 	ItemType_0xE9_233 = 0xE9,
 	ItemType_0xEA_234 = 0xEA,
@@ -253,6 +257,15 @@ string GetSegmentName(struct Segment& segment){
 	case ItemType_0x22_034:
 		return "Unknown_ItemType_0x22_034";
 		break;
+	case ItemType_0x2B_043:
+		return "Unknown_ItemType_0x2B_043";
+		break;
+	case ItemType_0x34_052:
+		return "Unknown_ItemType_0x34_052";
+		break;
+	case ItemType_0x35_053:
+		return "Unknown_ItemType_0x35_053";
+		break;		
 	case ItemType_0x37_055:
 		return "Unknown_ItemType_0x37_055";
 		break;
@@ -532,6 +545,9 @@ string GetSegmentName(struct Segment& segment){
 	case ItemType_0xDF_223:
 		return "Unknown_ItemType_0xDF_223";
 		break;
+	case ItemType_0xE4_228:
+		return "Unknown_ItemType_0xE4_228";
+		break;
 	case ItemType_0xE5_229:
 		return "Unknown_ItemType_0xE5_229";
 		break;
@@ -751,12 +767,12 @@ typedef struct (uint64 pathSizePosMain){
 	local uint64 posPath <hidden=true> = FTell();
 	local uint64 pathSizePos <hidden=true> = pathSizePosMain;
 	wstring path <bgcolor=0xFFC79F, name="Texture Path">;
-}multy_tex_path <read=Multy_Tex_Path_Red, write=Multy_Tex_Path_Write, name="Texture Path", open=suppress>;
+}multi_tex_path <read=Multi_Tex_Path_Read, write=Multi_Tex_Path_Write, name="Texture Path", open=suppress>;
 
-string Multy_Tex_Path_Red( multy_tex_path &input ){
+string Multi_Tex_Path_Read( multi_tex_path &input ){
     return input.path;
 }
-void Multy_Tex_Path_Write( multy_tex_path &input, string s){
+void Multi_Tex_Path_Write( multi_tex_path &input, string s){
 	local uint32 sizeDif = 0;
 	local uint32 pathSize = ReadUInt(input.pathSizePos);
 	if(sizeof(input.path) > sizeof(s) * 2){
@@ -783,7 +799,7 @@ typedef struct{
         wchar_t path[1] <bgcolor=0xABA8FF, name="Texture Path">;
     } else if(size > 0x02){
 		do{
-			multy_tex_path path(pos - 4);
+			multi_tex_path path(pos - 4);
 			posTemp = FTell();
 		}while(posTemp - pos < size);
     }
@@ -816,6 +832,57 @@ void Write_Basic_Path(basic_path &input, string s){
     WriteWString(input.pos, (wstring)s);
     input.size = (Strlen(s) + 1) * 2;
 }
+
+
+
+typedef struct (uint64 pthSPos, byte pathSizeMultiplier, byte padding)
+    {
+	local uint32 pathSize <hidden=true> = ReadUInt(pthSPos);
+	local uint64 pathSizePos <hidden=true> = pthSPos;
+	local uint64 pathPos <hidden=true> = FTell();
+	local byte psm <hidden=true> = pathSizeMultiplier;
+	local byte pd <hidden=true> = padding;
+	
+    if(pathSize < 3 && pd == 1){
+        wstring path <bgcolor=0xABA8FF, name="Path", open=suppress>;
+    } else if(pathSize > 0x00){
+        wstring path <name="Path", open=suppress>;
+    }
+} loose_path <read=Read_Loose_Path, write=Write_Loose_Path, open=suppress>;
+
+wstring Read_Loose_Path(loose_path &input){
+    if(input.pathSize < 3){
+        return (wstring)"No Path Linked!";
+    } else{
+        return input.path;
+    }
+}
+
+void Write_Loose_Path(loose_path &input, string s){
+	local byte temp = 2;
+	if(input.psm == 1) temp = 1;
+	local uint32 ogSize = (Strlen(input.path) + 1) * temp;
+    local uint32 size = (Strlen(s) + 1) * temp;
+	local uint32 diff = 0;
+	temp = 1;
+	if(input.psm == 1) temp = 2;
+	local byte tempPad = 0;
+	if(input.pd == 0) tempPad = 1;
+	if(ogSize > size){
+		diff = ogSize - size;
+		DeleteBytes(input.pathPos, (diff + tempPad) * temp);
+		if(Strlen(s) > 0) WriteWString(input.pathPos, (wstring)s);
+		WriteUInt(input.pathSizePos, input.pathSize - (diff + tempPad));
+	} else if(ogSize < size){
+		diff = size - ogSize;
+		InsertBytes(input.pathPos, diff * temp, 0);
+		WriteWString(input.pathPos, (wstring)s);
+		WriteUInt(input.pathSizePos, input.pathSize + diff);
+	} else{
+		WriteWString(input.pathPos, (wstring)s);
+	}
+}
+
 
 
 
@@ -1529,6 +1596,94 @@ void HeaderKind(EffectGraphType typeId){
             large_cc largel_color;
 			uint32 ukn3[8];
 			break;
+		
+		case ItemType_0x2B_043:
+            uint32 ukn1[2];
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn2[57];
+			uint32 subSize <name="Sub Struct Size">;
+			uint32 ukn3[3];
+			local uint64 mdfPos <hidden=true> = FTell();
+			uint32 mdfPathSize <name="MDF Path Size">;
+			local uint64 mmtrPos <hidden=true> = FTell();
+			uint32 mmtrPathSize <name="MMTR Path Size">;
+			local uint64 texPos <hidden=true> = FTell();
+			uint32 texPathSize <name="Textures Path Size">;
+			
+			if(0 < subSize){
+				struct{
+					for (e = 0; e < subSize; e++){
+						struct{
+							uint32 ukn5[8];
+						}substruct <name="Sub Struct">;
+					}
+				}substructs <name="Sub Structs">;
+            }
+			
+			loose_path mdfPath(mdfPos, 1, 1) <bgcolor=0x66FFFF, name="MDF Path">;
+			loose_path mmtrPath(mmtrPos, 1, 1) <bgcolor=0xEEFFAA, name="MMTR Path">;
+			local uint32 texSizeTemp  <hidden=true> = 0;
+			local uint32 tempCounter = 0;
+			while(texSizeTemp < texPathSize){
+				loose_path texPath(texPos, 1, 0) <bgcolor=0xFFC79F, name="Texture Path">;
+				texSizeTemp += Strlen(texPath.path) + 1;
+				tempCounter++;
+				if(tempCounter == 50){
+					Printf("\n ERROR!");
+					break;
+				}
+			}
+			break;
+		
+		case ItemType_0x34_052:
+            uint32 ukn1[61];
+            bone_t bone <name="Bone">;
+			uint32 ukn2;
+			mpos[h] = FTell();
+            h++;
+            mid_cc mid_color;
+			uint32 ukn3[6];
+			uint32 subSize <name="Sub Struct Size">;
+			uint32 ukn4[3];
+			local uint64 mdfPos <hidden=true> = FTell();
+			uint32 mdfPathSize <name="MDF Path Size">;
+			local uint64 mmtrPos <hidden=true> = FTell();
+			uint32 mmtrPathSize <name="MMTR Path Size">;
+			local uint64 texPos <hidden=true> = FTell();
+			uint32 texPathSize <name="Textures Path Size">;
+			
+            if(0 < subSize){
+				struct{
+					for (e = 0; e < subSize; e++){
+						struct{
+							uint32 ukn5[8];
+						}substruct <name="Sub Struct">;
+					}
+				}substructs <name="Sub Structs">;
+            }
+			
+			loose_path mdfPath(mdfPos, 1, 1) <bgcolor=0x66FFFF, name="MDF Path">;
+			loose_path mmtrPath(mmtrPos, 1, 1) <bgcolor=0xEEFFAA, name="MMTR Path">;
+			local uint32 texSizeTemp  <hidden=true> = 0;
+			local uint32 tempCounter = 0;
+			while(texSizeTemp < texPathSize){
+				loose_path texPath(texPos, 1, 0) <bgcolor=0xFFC79F, name="Texture Path">;
+				texSizeTemp += Strlen(texPath.path) + 1;
+				tempCounter++;
+				if(tempCounter == 50){
+					Printf("\n ERROR!");
+					break;
+				}
+			}
+			//loose_multi_path texPath(texPos) <name="Texture Path">;
+			
+			break;
+			
+		case ItemType_0x35_053:
+            uint32 ukn[32];
+			break;
 			
 		case ItemType_0x37_055:
             uint32 ukn1[19];
@@ -1914,7 +2069,8 @@ void HeaderKind(EffectGraphType typeId){
             h++;
             mid_cc mid_color;
 			uint32 ukn2[74];
-			ubyte uk3[6];
+			bone_t bone <name="Bone">;
+			//ubyte uk3[6];
 			break;
 			
 		case ItemType_0x73_115:
@@ -2478,6 +2634,10 @@ void HeaderKind(EffectGraphType typeId){
                 wchar_t texPath[texPathSize/2] <name="Texture Path", bgcolor=0x99FF99>;
             }
 			break;
+		
+		case ItemType_0xE4_228:
+            uint32 ukn[11];
+			break;
 			
 		case ItemType_0xE5_229:
             ubyte ukn1[14];
@@ -2869,6 +3029,7 @@ void EFXTemplate(){
 				uint32 ukn;
 				uint32 ukn;
 				uint32 ukn;
+				local uint64 efxSizePos <hidden=true> = FTell();
 				uint32 efxSize <name="Path/EFX Size">;
 				local char efxID[4] <hidden=true, open=suppress>;
                 ReadBytes(efxID, FTell(), 4);
@@ -2876,7 +3037,8 @@ void EFXTemplate(){
 					EFXTemplate();
 				} else{
                     link = true;
-					wchar_t efxPath[efxSize/2] <name="Linked EFX Path", bgcolor=0xFFC1E1, open=suppress>;
+					loose_path mdfPath(efxSizePos, 0, 1) <bgcolor=0xFFC1E1, name="Linked EFX Path", open=suppress>;
+					//wchar_t efxPath[efxSize/2] <name="Linked EFX Path", bgcolor=0xFFC1E1, open=suppress>;
 				}
 			} efxHeader <name=EFX_Block_Name>;
 		}
